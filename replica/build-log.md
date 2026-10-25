@@ -39,3 +39,10 @@ Desarrollo: `?org=costa` cambia de medio, `?como=user-redactor` cambia de usuari
   Verificado: en el build de producción no aparecen.
 - En producción, un dominio que no es de ningún medio responde 404 (probado).
 - No correr `next build` con `next dev` encendido: comparten `.next` y el dev pierde el CSS.
+
+## /replica-backend (2026-10-25)
+
+- Capa de datos Supabase con las mismas firmas; `lib/data/index.ts` elige por variables de entorno. Ninguna pantalla cambió de imports.
+- Auth real (S08/S09 + Mi cuenta), panel con sesión, seguir tema, votos con voter_hash, límites por IP.
+- **Más difícil de lo esperado:** probarlo. Supabase local necesita Docker y esta máquina tiene la virtualización desactivada; queda pendiente probar con el proyecto en la nube (`replica/backend.md`).
+- Pendiente: subir imágenes desde el editor, Stripe (milestone 5), SMTP propio + digest de temas, jobs.

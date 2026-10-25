@@ -2,7 +2,10 @@
 
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { listArticles, searchArticles, votePoll, type ArticleFilter } from "@/lib/data";
+import { redirect } from "next/navigation";
+import { getTagBySlug, listArticles, searchArticles, votePoll, type ArticleFilter } from "@/lib/data";
+import { getSessionUser, rateLimit } from "@/lib/auth";
+import { setFollowing } from "@/lib/follows";
 import { getCurrentOrg } from "@/lib/org";
 import { StoryList } from "@/components/news/story-card";
 
@@ -14,9 +17,10 @@ export async function loadMore(filter: ArticleFilter & { q?: string; withDek?: b
   return { html: <StoryList articles={page.items} org={org} withDek={withDek} />, nextCursor: page.nextCursor };
 }
 
-// Un voto por navegador (cookie). La versión real usa voter_hash + índice único.
+// Un voto por navegador (cookie) y, con Supabase, por voter_hash con índice único en la base.
 export async function vote(pollId: string, optionId: string) {
   const org = await getCurrentOrg();
+  if (!(await rateLimit("vote", 20, 600))) return { ok: false as const, error: "Demasiados intentos. Espera unos minutos." };
   const jar = await cookies();
   const key = `voto-${pollId}`;
   if (jar.get(key)) return { ok: false as const, error: "Ya votaste en esta encuesta." };
@@ -25,4 +29,15 @@ export async function vote(pollId: string, optionId: string) {
   jar.set(key, optionId, { maxAge: 60 * 60 * 24 * 365, httpOnly: true, sameSite: "lax", path: "/" });
   revalidatePath("/");
   return { ok: true as const };
+}
+
+// Seguir o dejar de seguir un tema. El tema se busca en el medio actual: un id de otro medio no sirve.
+export async function toggleFollow(form: FormData) {
+  const org = await getCurrentOrg();
+  const slug = String(form.get("slug") ?? "");
+  const tag = await getTagBySlug(org.id, slug);
+  if (!tag || tag.kind !== "topic") return;
+  if (!(await getSessionUser())) redirect(`/cuenta/entrar?seguir=${encodeURIComponent(slug)}`);
+  await setFollowing(org.id, tag.id, form.get("seguir") === "1");
+  revalidatePath(`/tema/${slug}`);
 }

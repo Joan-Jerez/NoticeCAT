@@ -17,7 +17,7 @@ Página de etiqueta con lista,etiqueta,must,yes,yes,/tema/{slug}
 Última hora en orden cronológico con bajada,última hora,must,yes,yes,
 URLs limpias con sección fecha slug e id,seo,must,yes,yes,301/308 a la canónica si cambia el slug
 Metadatos OG y Twitter para compartir,seo,must,yes,partial,OG y Twitter listos; faltan sitemaps
-Admin: crear editar y borrar notas,admin,must,no,yes,datos en JSON local hasta /replica-backend
+Admin: crear editar y borrar notas,admin,must,no,yes,JSON local o Supabase con RLS por rol (código listo; falta probar con el proyecto real)
 Admin: estados borrador programado publicado,admin,must,no,yes,programadas salen solas a su hora
 Admin: subir imágenes con pie y crédito,admin,must,no,partial,se elige de la biblioteca; subir llega con Storage
 Admin: gestionar secciones autores y etiquetas,admin,must,no,no,solo datos de prueba
@@ -31,13 +31,13 @@ Directorio de feeds RSS,rss,should,yes,yes,
 Ampliar foto de portada,artículo,should,yes,yes,<dialog>
 Bloque de opinión y columnistas con foto,portada,should,yes,yes,
 Etiqueta de contenido patrocinado,portada,should,yes,yes,
-Cuenta de lector con email y contraseña,cuentas,should,yes,partial,"formularios listos, sin envío hasta Supabase Auth"
-Login con Google,cuentas,should,yes,partial,botón deshabilitado hasta Supabase Auth
-Recuperar contraseña,cuentas,should,yes,partial,formulario sin envío
+Cuenta de lector con email y contraseña,cuentas,should,yes,partial,"Supabase Auth: registro con verificación, entrar, salir en todos los dispositivos, borrar cuenta; falta probar con el proyecto real"
+Login con Google,cuentas,should,yes,partial,botón aparece solo si el proveedor está activo en Supabase; falta crear la app OAuth propia
+Recuperar contraseña,cuentas,should,yes,partial,enlace por email y página de contraseña nueva; falta probar con el proyecto real
 Admin: importar Word TXT PDF,admin,should,no,no,página provisional
-Seguir un tema,cuentas,could,yes,partial,botón lleva al login; guardar el seguimiento requiere cuentas
-Login con Facebook,cuentas,could,yes,partial,botón deshabilitado
-Encuestas con votación,engagement,could,yes,yes,un voto por navegador; índice único en la versión real
+Seguir un tema,cuentas,could,yes,partial,guardado en topic_follows y listado en Mi cuenta; falta el aviso por email (digest)
+Login con Facebook,cuentas,could,yes,partial,igual que Google: falta la app de Meta propia
+Encuestas con votación,engagement,could,yes,yes,cookie + voter_hash con índice único en la base y límite por IP
 Bloque de videos con icono de reproducción,portada,could,yes,no,
 Carrusel en bloque de sección,portada,could,yes,no,
 Especiales (banners de investigaciones),portada,could,yes,no,

@@ -2,7 +2,8 @@ import "server-only";
 import { cache } from "react";
 import { cookies, headers } from "next/headers";
 import { notFound } from "next/navigation";
-import { getDefaultOrg, getOrgByHost, getOrgBySlug, getStaffUser } from "./data";
+import { getDefaultOrg, getOrgByHost, getOrgBySlug, getStaffUser, usingSupabase } from "./data";
+import { getSessionUser } from "./auth";
 import type { Organization, Role, StaffUser } from "./types";
 
 // El medio sale del dominio (Host). En desarrollo, ?org=slug lo fija con una
@@ -20,11 +21,14 @@ export const getCurrentOrg = cache(async (): Promise<Organization> => {
   notFound();
 });
 
-// Sesión del personal: provisional hasta /replica-backend (Supabase Auth).
-// En desarrollo se elige el usuario con la cookie dev-user.
+// Personal del medio actual. Con Supabase, la sesión real; sin él, en
+// desarrollo se elige el usuario con la cookie dev-user (?como=user-redactor).
 export const getCurrentStaff = cache(async (): Promise<{ user: StaffUser; role: Role } | null> => {
   const org = await getCurrentOrg();
-  const userId = (await cookies()).get("dev-user")?.value ?? (org.slug === "costa" ? "user-costa" : "user-editora");
+  let userId: string | undefined;
+  if (usingSupabase) userId = (await getSessionUser())?.id;
+  else userId = (await cookies()).get("dev-user")?.value ?? (org.slug === "costa" ? "user-costa" : "user-editora");
+  if (!userId) return null;
   const user = await getStaffUser(userId);
   const role = user?.memberships.find((m) => m.orgId === org.id)?.role;
   return user && role ? { user, role } : null;

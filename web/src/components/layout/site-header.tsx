@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Search, User } from "lucide-react";
 import { getSectionTree } from "@/lib/data";
+import { getSessionUser } from "@/lib/auth";
 import { formatLongDate } from "@/lib/format";
 import type { Organization } from "@/lib/types";
 import { iconButtonClass } from "@/components/ui/button";
@@ -12,6 +13,7 @@ export async function SiteHeader({ org }: { org: Organization }) {
   const tree = (await getSectionTree(org.id)).filter((s) => s.inMenu);
   const menu = tree.map((s) => ({ name: s.name, href: `/${s.slug}`, children: s.children.filter((c) => c.inMenu).map((c) => ({ name: c.name, href: `/${s.slug}/${c.slug}` })) }));
   const today = formatLongDate(new Date().toISOString(), org);
+  const user = await getSessionUser();
 
   return (
     <>
@@ -40,9 +42,9 @@ export async function SiteHeader({ org }: { org: Organization }) {
                 <Search className="size-3.5" aria-hidden />
                 Buscar
               </Link>
-              <Link href="/cuenta/entrar" className="inline-flex items-center gap-1.5 hover:text-text">
+              <Link href={user ? "/cuenta" : "/cuenta/entrar"} className="inline-flex items-center gap-1.5 hover:text-text">
                 <User className="size-3.5" aria-hidden />
-                Entrar
+                {user ? "Mi cuenta" : "Entrar"}
               </Link>
             </div>
           </div>

@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NoticeCAT (web)
 
-## Getting Started
+Plataforma de noticias para varios medios: Next.js 15 + Supabase.
 
-First, run the development server:
+## Arrancar
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev          # http://localhost:3000  (panel: /admin)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Sin `.env.local`, la app usa datos de prueba locales (`.data/db.json`; bórralo para reiniciarlos).
+En ese modo, `?org=costa` cambia de medio y `?como=user-redactor` cambia el usuario del panel.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Con Supabase
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. `cp .env.example .env.local` y rellena las claves de tu proyecto.
+2. `npx supabase login`, `npx supabase link --project-ref <ref>`, `npm run db:push`.
+3. `npm run db:seed -- --remoto` (datos y usuarios de prueba) y `npm run db:test-rls` (comprueba las reglas de acceso).
 
-## Learn More
+Pasos completos y checklist de seguridad: `../replica/backend.md`.
 
-To learn more about Next.js, take a look at the following resources:
+## Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| script | hace |
+| --- | --- |
+| `dev`, `build`, `start` | Next.js |
+| `typecheck`, `lint`, `test:e2e` | comprobaciones (e2e con Playwright y Edge) |
+| `db:push` | aplica `supabase/migrations` al proyecto enlazado |
+| `db:seed` | carga los dos medios de prueba (`--remoto` para un proyecto en la nube) |
+| `db:test-rls` | prueba RLS con cuatro identidades |
+| `db:start`, `db:stop`, `db:reset` | Supabase local (requiere Docker con virtualización) |

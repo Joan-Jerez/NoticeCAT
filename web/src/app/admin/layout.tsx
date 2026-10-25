@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { redirect } from "next/navigation";
+import { ExternalLink, LogOut } from "lucide-react";
+import { getSessionUser } from "@/lib/auth";
+import { usingSupabase } from "@/lib/data";
 import { getCurrentOrg, getCurrentStaff } from "@/lib/org";
 import { Avatar } from "@/components/ui/misc";
 import { AdminNav } from "@/components/layout/admin-nav";
+import { signOut } from "@/app/(public)/cuenta/actions";
 
 export const metadata: Metadata = { title: { default: "Panel", template: "%s · Panel" }, robots: { index: false } };
 
@@ -13,6 +17,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const org = await getCurrentOrg();
   const staff = await getCurrentStaff();
 
+  if (!staff && usingSupabase && !(await getSessionUser())) redirect("/cuenta/entrar?siguiente=/admin");
   if (!staff) {
     return (
       <main className="container-page py-20 text-center">
@@ -45,6 +50,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 <p className="text-caption text-on-inverse-muted">{roleNames[staff.role]}</p>
               </div>
             </div>
+            {usingSupabase && (
+              <form action={signOut}>
+                <button type="submit" className="flex items-center gap-2 text-ui-sm text-on-inverse-muted hover:text-on-inverse">
+                  <LogOut className="size-4" aria-hidden /> Salir
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </aside>
