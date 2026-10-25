@@ -1,0 +1,41 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+@layer base {
+  html {
+    @apply bg-bg;
+  }
+  body {
+    @apply bg-bg font-sans text-ui text-text antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition: none !important;
+      animation: none !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@utility eyebrow {
+  @apply text-eyebrow uppercase;
+}
+
+/* el enlace del titular cubre toda la tarjeta */
+@utility story-link {
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+}
+
+@utility container-page {
+  @apply mx-auto w-full max-w-content px-4 md:px-12;
+}
