@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NoticeCAT · Sistema de diseño</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.11"></script>
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <style type="text/tailwindcss">
+/* TOKENS:START */
+@theme static {
+  --color-*: initial;
+  --color-bg: #FCFBFD;
+  --color-surface: #F7F5FA;
+  --color-surface-tint: #EFEAF7;
+  --color-raised: #FFFFFF;
+  --color-border: #E4DEED;
+  --color-border-input: #8E84A3;
+  --color-text: #1E1728;
+  --color-text-muted: #6E6580;
+  --color-accent: #6C4FA1;
+  --color-accent-hover: #5A4089;
+  --color-on-accent: #FBF9FD;
+  --color-inverse: #1E1728;
+  --color-inverse-surface: #332A40;
+  --color-inverse-border: #3E3549;
+  --color-on-inverse: #FBF9FD;
+  --color-on-inverse-muted: #A79EB5;
+  --color-success: #33694A;
+  --color-success-bg: #E2EFE6;
+  --color-warning: #7F5810;
+  --color-warning-bg: #F6EBD4;
+  --color-neutral: #6B6459;
+  --color-neutral-bg: #E8E4DC;
+  --color-danger: #B3261E;
+  --color-danger-bg: #F9E3E1;
+  --color-focus: #6C4FA1;
+  --color-scrim: #251D30;
+
+  --font-display: var(--font-nf-display, 'Playfair Display'), Georgia, 'Times New Roman', serif;
+  --font-serif: var(--font-nf-serif, 'Source Serif 4'), Georgia, 'Times New Roman', serif;
+  --font-sans: var(--font-nf-sans, Inter), system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --text-*: initial;
+  --text-eyebrow: 0.6875rem;
+  --text-eyebrow--line-height: 1rem;
+  --text-eyebrow--font-weight: 600;
+  --text-eyebrow--letter-spacing: 1.6px;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.125rem;
+  --text-caption--font-weight: 400;
+  --text-ui-sm: 0.8125rem;
+  --text-ui-sm--line-height: 1.25rem;
+  --text-ui-sm--font-weight: 400;
+  --text-ui: 0.875rem;
+  --text-ui--line-height: 1.375rem;
+  --text-ui--font-weight: 400;
+  --text-body-sm: 1rem;
+  --text-body-sm--line-height: 1.625rem;
+  --text-body-sm--font-weight: 400;
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.875rem;
+  --text-body--font-weight: 400;
+  --text-dek: 1.125rem;
+  --text-dek--line-height: 1.8125rem;
+  --text-dek--font-weight: 400;
+  --text-title-sm: 1.1875rem;
+  --text-title-sm--line-height: 1.5rem;
+  --text-title-sm--font-weight: 700;
+  --text-title: 1.375rem;
+  --text-title--line-height: 1.875rem;
+  --text-title--font-weight: 700;
+  --text-heading: 1.75rem;
+  --text-heading--line-height: 2.125rem;
+  --text-heading--font-weight: 700;
+  --text-heading-lg: 2rem;
+  --text-heading-lg--line-height: 2.375rem;
+  --text-heading-lg--font-weight: 700;
+  --text-headline: 2.75rem;
+  --text-headline--line-height: 3.1875rem;
+  --text-headline--font-weight: 700;
+  --text-hero: 3.375rem;
+  --text-hero--line-height: 3.75rem;
+  --text-hero--font-weight: 700;
+
+  --tracking-tight: 0.6px;
+  --tracking-wide: 1.2px;
+  --tracking-wider: 1.6px;
+
+  --spacing: 0.25rem;
+
+  --radius-*: initial;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-pill: 999px;
+  --radius-full: 50%;
+
+  --shadow-card: none;
+  --shadow-pop: 0 18px 48px rgba(37, 29, 48, 0.25);
+
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --ease-out: cubic-bezier(.2,.8,.2,1);
+
+  --container-content: 84rem;
+  --container-article: 47.5rem;
+  --container-sidebar: 24.5rem;
+  --container-card: 21.25rem;
+  --container-thumb: 7rem;
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 90rem;
+}
+
+@media (width < 48rem) {
+  :root {
+    --text-headline: 2rem;
+    --text-headline--line-height: 2.375rem;
+    --text-hero: 2.125rem;
+    --text-hero--line-height: 2.5rem;
+  }
+}
+/* TOKENS:END */
+
+    @layer base {
+      body { @apply bg-bg text-text font-sans text-ui antialiased; }
+      :focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+      @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+    }
+    @utility eyebrow { @apply text-eyebrow uppercase; }
+    @utility story-link {
+      &::after { content: ""; position: absolute; inset: 0; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ============================ Header -->
+  <header class="border-b border-border bg-bg">
+    <div class="mx-auto max-w-content px-4 md:px-12">
+      <div class="flex h-14 items-center justify-between gap-4 md:h-20">
+        <button class="grid size-11 place-items-center rounded-xs hover:bg-surface md:hidden" aria-label="Abrir menú" aria-expanded="false"><i data-lucide="menu" class="size-[18px]"></i></button>
+        <a href="#" class="font-display text-heading md:text-heading-lg">NoticeCAT</a>
+        <span class="hidden text-caption text-text-muted md:block">Domingo, 25 de octubre de 2026</span>
+        <div class="flex items-center gap-1">
+          <button class="grid size-11 place-items-center rounded-xs hover:bg-surface md:size-8" aria-label="Buscar"><i data-lucide="search" class="size-[18px]"></i></button>
+          <a href="#" class="hidden h-8 items-center gap-2 rounded-xs border border-border px-3 text-ui-sm font-semibold hover:bg-surface md:inline-flex"><i data-lucide="user" class="size-4"></i>Entrar</a>
+        </div>
+      </div>
+      <nav aria-label="Secciones" class="hidden border-t border-border md:block">
+        <ul class="flex gap-6 py-3 text-ui font-semibold">
+          <li><a href="#" aria-current="page" class="border-b-2 border-accent pb-3 text-accent">Portada</a></li>
+          <li><a href="#" class="hover:text-accent">País</a></li>
+          <li><button class="inline-flex items-center gap-1 hover:text-accent" aria-expanded="false">Política <i data-lucide="chevron-down" class="size-4"></i></button></li>
+          <li><a href="#" class="hover:text-accent">Economía</a></li>
+          <li><a href="#" class="hover:text-accent">Mundo</a></li>
+          <li><a href="#" class="hover:text-accent">Cultura</a></li>
+          <li><a href="#" class="hover:text-accent">Deportes</a></li>
+          <li><a href="#" class="hover:text-accent">Opinión</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-content space-y-16 px-4 py-12 md:px-12">
+    <div>
+      <p class="eyebrow text-accent">Sistema de diseño</p>
+      <h1 class="font-display text-headline">Primitivas de NoticeCAT</h1>
+      <p class="mt-2 max-w-article font-serif text-dek text-text-muted">Cada componente de <code class="font-mono text-ui-sm">components.md</code>, construido una vez con los tokens. Si algo se ve mal aquí, se arregla en los tokens, no en la pantalla.</p>
+    </div>
+
+    <!-- ============================ Color -->
+    <section aria-labelledby="h-color">
+      <h2 id="h-color" class="border-b-2 border-text pb-2 font-display text-heading">Color</h2>
+      <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-7" id="swatches"></div>
+    </section>
+
+    <!-- ============================ Tipografía -->
+    <section aria-labelledby="h-type">
+      <h2 id="h-type" class="border-b-2 border-text pb-2 font-display text-heading">Tipografía</h2>
+      <div class="mt-6 space-y-4">
+        <p class="font-display text-hero">hero · Display 54/60</p>
+        <p class="font-display text-headline">headline · Display 44/51</p>
+        <p class="font-display text-heading-lg">heading-lg · Display 32/38</p>
+        <p class="font-display text-heading">heading · Display 28/34</p>
+        <p class="font-display text-title">title · Display 22/30</p>
+        <p class="font-display text-title-sm">title-sm · Display 19/24</p>
+        <p class="font-serif text-dek text-text-muted">dek · Serif 18/29: la bajada que resume la nota en una línea.</p>
+        <p class="max-w-article font-serif text-body">body · Serif 17/30. El cuerpo de la nota se lee en una columna de 760 px como máximo, con el interlineado amplio de un periódico y párrafos separados por 24 px.</p>
+        <p class="font-serif text-body-sm">body-sm · Serif 16/26</p>
+        <p class="text-ui">ui · Inter 14/22</p>
+        <p class="text-ui-sm">ui-sm · Inter 13/20</p>
+        <p class="text-caption text-text-muted">caption · Inter 12/18</p>
+        <p class="eyebrow text-accent">eyebrow · Inter 11/16 versalitas</p>
+      </div>
+    </section>
+
+    <!-- ============================ Botones -->
+    <section aria-labelledby="h-btn">
+      <h2 id="h-btn" class="border-b-2 border-text pb-2 font-display text-heading">Botones</h2>
+      <div class="mt-6 flex flex-wrap items-center gap-3">
+        <button class="inline-flex h-10 items-center gap-2 rounded-xs bg-accent px-4 text-ui font-semibold text-on-accent transition-colors duration-fast hover:bg-accent-hover">Publicar</button>
+        <button class="inline-flex h-10 items-center gap-2 rounded-xs border border-border bg-raised px-4 text-ui font-semibold hover:bg-surface"><i data-lucide="save" class="size-4"></i>Guardar borrador</button>
+        <button class="inline-flex h-10 items-center gap-2 rounded-xs px-4 text-ui font-semibold text-accent hover:bg-surface-tint">Vista previa</button>
+        <button class="inline-flex h-10 items-center gap-2 rounded-xs bg-danger px-4 text-ui font-semibold text-raised">Eliminar</button>
+        <button class="inline-flex h-10 cursor-not-allowed items-center gap-2 rounded-xs bg-accent px-4 text-ui font-semibold text-on-accent opacity-50" disabled>Deshabilitado</button>
+        <button class="inline-flex h-10 items-center gap-2 rounded-xs bg-accent px-4 text-ui font-semibold text-on-accent" aria-busy="true"><i data-lucide="loader-circle" class="size-4 animate-spin"></i>Publicando…</button>
+        <button class="inline-flex h-8 items-center rounded-xs bg-accent px-3 text-ui-sm font-semibold text-on-accent">sm 32</button>
+        <button class="inline-flex h-12 items-center rounded-xs bg-accent px-5 text-ui font-semibold text-on-accent">lg 48</button>
+        <button class="grid size-8 place-items-center rounded-xs border border-border bg-raised hover:bg-surface" aria-label="Más opciones"><i data-lucide="ellipsis" class="size-4"></i></button>
+      </div>
+    </section>
+
+    <!-- ============================ Formularios -->
+    <section aria-labelledby="h-form">
+      <h2 id="h-form" class="border-b-2 border-text pb-2 font-display text-heading">Formularios</h2>
+      <div class="mt-6 grid gap-6 md:grid-cols-3">
+        <div>
+          <label for="f1" class="mb-1.5 block text-ui-sm font-semibold">Correo</label>
+          <input id="f1" type="email" placeholder="tu@correo.com" class="h-10 w-full rounded-xs border border-border-input bg-raised px-3 text-ui placeholder:text-text-muted focus:border-accent" />
+          <p class="mt-1.5 text-caption text-text-muted">Te enviaremos un enlace para entrar.</p>
+        </div>
+        <div>
+          <label for="f2" class="mb-1.5 block text-ui-sm font-semibold">Contraseña</label>
+          <input id="f2" type="password" value="123" aria-invalid="true" aria-describedby="f2e" class="h-10 w-full rounded-xs border border-danger bg-raised px-3 text-ui" />
+          <p id="f2e" class="mt-1.5 flex items-center gap-1.5 text-caption text-danger"><i data-lucide="circle-alert" class="size-3.5"></i>Debe tener al menos 8 caracteres.</p>
+        </div>
+        <div>
+          <label for="f3" class="mb-1.5 block text-ui-sm font-semibold">Sección</label>
+          <select id="f3" class="h-10 w-full rounded-xs border border-border-input bg-raised px-3 text-ui"><option>Economía</option><option>País</option></select>
+          <p class="mt-1.5 text-caption text-text-muted">&nbsp;</p>
+        </div>
+        <div>
+          <label for="f4" class="mb-1.5 block text-ui-sm font-semibold">Deshabilitado</label>
+          <input id="f4" disabled value="No editable" class="h-10 w-full cursor-not-allowed rounded-xs border border-border bg-surface px-3 text-ui text-text-muted" />
+        </div>
+        <fieldset class="flex items-end gap-6">
+          <legend class="sr-only">Casillas</legend>
+          <label class="flex items-center gap-2 text-ui"><input type="checkbox" checked class="size-[18px] accent-accent" />Destacada</label>
+          <label class="flex items-center gap-2 text-ui"><input type="checkbox" class="size-[18px] accent-accent" />Patrocinada</label>
+        </fieldset>
+      </div>
+    </section>
+
+    <!-- ============================ Chips, tags, timestamp -->
+    <section aria-labelledby="h-chip">
+      <h2 id="h-chip" class="border-b-2 border-text pb-2 font-display text-heading">Estados, temas y meta</h2>
+      <div class="mt-6 flex flex-wrap items-center gap-3">
+        <span class="eyebrow inline-flex items-center gap-1.5 rounded-xs bg-success-bg px-2 py-1 text-success"><span class="size-1.5 rounded-full bg-success"></span>Publicado</span>
+        <span class="eyebrow inline-flex items-center gap-1.5 rounded-xs bg-warning-bg px-2 py-1 text-warning"><span class="size-1.5 rounded-full bg-warning"></span>Programado</span>
+        <span class="eyebrow inline-flex items-center gap-1.5 rounded-xs bg-neutral-bg px-2 py-1 text-neutral"><span class="size-1.5 rounded-full bg-neutral"></span>Borrador</span>
+        <span class="eyebrow inline-flex items-center gap-1.5 rounded-xs bg-danger-bg px-2 py-1 text-danger"><span class="size-1.5 rounded-full bg-danger"></span>Error</span>
+        <a href="#" class="rounded-pill bg-surface-tint px-3 py-1 text-ui-sm hover:underline">Vivienda</a>
+        <button class="inline-flex items-center gap-1 rounded-pill border border-border px-3 py-1 text-ui-sm hover:bg-surface" aria-pressed="false">Seguir <i data-lucide="plus" class="size-3.5"></i></button>
+        <button class="inline-flex items-center gap-1 rounded-pill bg-accent px-3 py-1 text-ui-sm text-on-accent" aria-pressed="true">Siguiendo <i data-lucide="check" class="size-3.5"></i></button>
+        <time datetime="2026-10-25T15:25:00Z" class="text-caption text-text-muted">25 oct. 2026 · <b class="font-semibold">11:25 a. m.</b></time>
+      </div>
+    </section>
+
+    <!-- ============================ Tarjetas -->
+    <section aria-labelledby="h-card">
+      <h2 id="h-card" class="border-b-2 border-text pb-2 font-display text-heading">Tarjetas de nota</h2>
+      <div class="mt-6 grid gap-8 lg:grid-cols-[2fr_1fr]">
+        <!-- lead -->
+        <article class="relative">
+          <div class="aspect-video w-full bg-surface-tint"></div>
+          <p class="eyebrow mt-4 text-accent"><a href="#" class="relative z-10 hover:underline">Economía</a></p>
+          <h3 class="mt-1 font-display text-headline"><a href="#" class="story-link hover:underline decoration-1">El puerto amplía su terminal y promete reducir a la mitad la espera de los contenedores</a></h3>
+          <p class="mt-3 font-serif text-dek text-text-muted">La obra, financiada en tres etapas, empieza en enero y debería estar lista antes de la temporada alta de 2028.</p>
+          <p class="mt-3 text-caption text-text-muted">Por <span class="font-semibold text-text">Laura Méndez</span> · <time>hace 12 min</time></p>
+        </article>
+        <!-- rows -->
+        <div class="divide-y divide-border">
+          <article class="relative flex gap-3 py-4 first:pt-0">
+            <div class="aspect-[3/2] w-[110px] shrink-0 bg-surface-tint"></div>
+            <div>
+              <p class="eyebrow text-accent">País</p>
+              <h3 class="line-clamp-3 font-display text-title-sm"><a href="#" class="story-link hover:underline decoration-1">Abren la inscripción para las becas de verano en ciencias</a></h3>
+              <time class="text-caption text-text-muted">25 oct. · <b class="font-semibold">10:40 a. m.</b></time>
+            </div>
+          </article>
+          <article class="relative flex gap-3 py-4">
+            <div class="grid aspect-[3/2] w-[110px] shrink-0 place-items-center bg-inverse text-on-inverse"><i data-lucide="play" class="size-6"></i></div>
+            <div>
+              <p class="eyebrow text-accent">Video · 2:14</p>
+              <h3 class="line-clamp-3 font-display text-title-sm"><a href="#" class="story-link hover:underline decoration-1">Así se restaura un mural de 1960 en la zona colonial</a></h3>
+              <time class="text-caption text-text-muted">25 oct. · <b class="font-semibold">9:05 a. m.</b></time>
+            </div>
+          </article>
+          <article class="relative py-4">
+            <p class="eyebrow text-accent">Deportes</p>
+            <h3 class="font-display text-title-sm"><a href="#" class="story-link hover:underline decoration-1">Compacta, sin foto: el equipo juvenil gana el torneo regional</a></h3>
+            <time class="text-caption text-text-muted">25 oct. · <b class="font-semibold">8:30 a. m.</b></time>
+          </article>
+          <article class="relative flex gap-3 py-4">
+            <div class="grid size-12 shrink-0 place-items-center rounded-full bg-surface-tint font-semibold text-accent">RV</div>
+            <div>
+              <p class="text-ui-sm font-semibold">Rosa Valdez</p>
+              <h3 class="font-display text-title-sm italic"><a href="#" class="story-link hover:underline decoration-1">Opinión: la ciudad que caminamos</a></h3>
+            </div>
+          </article>
+          <article class="relative py-4">
+            <p class="eyebrow text-neutral">Patrocinado</p>
+            <h3 class="font-display text-title-sm"><a href="#" class="story-link hover:underline decoration-1">Cinco rutas para un fin de semana en la montaña</a></h3>
+          </article>
+        </div>
+      </div>
+      <!-- skeleton -->
+      <div class="mt-8 flex gap-3" aria-hidden="true">
+        <div class="aspect-[3/2] w-[110px] animate-pulse bg-surface"></div>
+        <div class="flex-1 space-y-2 py-1"><div class="h-3 w-16 animate-pulse bg-surface"></div><div class="h-4 w-3/4 animate-pulse bg-surface"></div><div class="h-3 w-24 animate-pulse bg-surface"></div></div>
+      </div>
+    </section>
+
+    <!-- ============================ Artículo -->
+    <section aria-labelledby="h-art">
+      <h2 id="h-art" class="border-b-2 border-text pb-2 font-display text-heading">Artículo</h2>
+      <div class="mx-auto mt-6 max-w-article">
+        <nav aria-label="Ruta" class="text-caption text-text-muted"><a href="#" class="hover:underline">Portada</a> / <a href="#" class="hover:underline">Economía</a> / <span aria-current="page" class="text-text">Vivienda</span></nav>
+        <div class="mt-4 flex flex-wrap items-center justify-between gap-3 border-y border-border py-3">
+          <div class="flex items-center gap-3">
+            <div class="grid size-8 place-items-center rounded-full bg-surface-tint text-ui-sm font-semibold text-accent">LM</div>
+            <p class="text-ui-sm"><a href="#" class="font-semibold hover:underline">Laura Méndez</a> · <a href="#" class="text-accent hover:underline">Santiago</a> · <time class="text-text-muted">25 oct. 2026 · <b class="font-semibold">11:25 a. m.</b></time> · <span class="text-text-muted">4 min de lectura</span></p>
+          </div>
+          <div class="flex gap-1">
+            <button class="grid size-11 place-items-center rounded-xs hover:bg-surface md:size-8" aria-label="Compartir en WhatsApp"><i data-lucide="message-circle" class="size-4"></i></button>
+            <button class="grid size-11 place-items-center rounded-xs hover:bg-surface md:size-8" aria-label="Compartir en Facebook"><i data-lucide="facebook" class="size-4"></i></button>
+            <button class="grid size-11 place-items-center rounded-xs hover:bg-surface md:size-8" aria-label="Compartir en X"><i data-lucide="twitter" class="size-4"></i></button>
+            <button class="grid size-11 place-items-center rounded-xs hover:bg-surface md:size-8" aria-label="Compartir en Telegram"><i data-lucide="send" class="size-4"></i></button>
+            <button class="grid size-11 place-items-center rounded-xs hover:bg-surface md:size-8" aria-label="Enviar por correo"><i data-lucide="mail" class="size-4"></i></button>
+            <button class="grid size-11 place-items-center rounded-xs hover:bg-surface md:size-8" aria-label="Copiar enlace"><i data-lucide="link" class="size-4"></i></button>
+          </div>
+        </div>
+        <figure class="mt-6">
+          <div class="relative aspect-video bg-surface-tint">
+            <button class="absolute right-2 top-2 grid size-8 place-items-center rounded-xs bg-raised/90" aria-label="Ampliar foto"><i data-lucide="expand" class="size-4"></i></button>
+          </div>
+          <figcaption class="mt-2 text-caption text-text-muted">Grúas en la nueva terminal, el viernes por la tarde. <span class="eyebrow">Foto: Archivo NoticeCAT</span></figcaption>
+        </figure>
+        <div class="mt-6 space-y-6 font-serif text-body">
+          <p>El primer párrafo responde lo esencial: <b class="font-semibold">qué pasó, a quién y cuándo</b>. Después, el cuerpo de la nota se desarrolla con la misma tipografía serif que se usa en la bajada.</p>
+          <h3 class="font-display text-title">Un subtítulo dentro del cuerpo</h3>
+          <ul class="list-disc space-y-2 pl-6 marker:text-accent"><li>Una lista con viñetas del color de acento.</li><li>Útil para cifras y fechas.</li></ul>
+          <aside class="border-y border-border py-3">
+            <p class="eyebrow text-accent">Lee además</p>
+            <a href="#" class="font-display text-title-sm hover:underline">Cómo cambió el precio del alquiler en los últimos cinco años</a>
+          </aside>
+          <blockquote class="border-l-2 border-accent pl-5 font-display text-title italic">"Una cita destacada con filete a la izquierda, en cursiva."</blockquote>
+        </div>
+        <div class="mt-8">
+          <p class="eyebrow text-text-muted">Temas</p>
+          <div class="mt-2 flex flex-wrap gap-2"><a href="#" class="rounded-pill bg-surface-tint px-3 py-1 text-ui-sm hover:underline">Vivienda</a><a href="#" class="rounded-pill bg-surface-tint px-3 py-1 text-ui-sm hover:underline">Puertos</a></div>
+        </div>
+        <div class="mt-8 flex gap-4 border-t border-border pt-6">
+          <div class="grid size-12 shrink-0 place-items-center rounded-full bg-surface-tint font-semibold text-accent">LM</div>
+          <div><a href="#" class="font-display text-title hover:underline">Laura Méndez</a><p class="font-serif text-body-sm text-text-muted">Periodista de economía. Cubre vivienda, transporte y empleo.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ Listados -->
+    <section aria-labelledby="h-list">
+      <h2 id="h-list" class="border-b-2 border-text pb-2 font-display text-heading">Listados y estados</h2>
+      <div class="mt-6 grid gap-8 md:grid-cols-3">
+        <div class="space-y-3">
+          <p class="text-ui-sm font-semibold">Cargar más</p>
+          <button class="h-10 w-full rounded-xs border border-border bg-raised text-ui font-semibold hover:bg-surface">Ver más notas</button>
+          <button class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-xs border border-border bg-raised text-ui font-semibold" aria-busy="true"><i data-lucide="loader-circle" class="size-4 animate-spin"></i>Cargando…</button>
+          <p class="text-center text-ui-sm text-text-muted">No hay más notas.</p>
+        </div>
+        <div class="rounded-xs border border-border bg-raised p-6 text-center">
+          <i data-lucide="newspaper" class="mx-auto size-8 text-text-muted"></i>
+          <p class="mt-3 font-display text-title-sm">Todavía no hay notas aquí</p>
+          <p class="mt-1 text-ui text-text-muted">Cuando se publique la primera, aparecerá en esta sección.</p>
+        </div>
+        <form class="rounded-xs border border-border bg-raised p-5">
+          <fieldset>
+            <legend class="font-display text-title-sm">¿Usas el transporte público a diario?</legend>
+            <div class="mt-3 space-y-2">
+              <label class="flex items-center gap-2 text-ui"><input type="radio" name="p" class="size-[18px] accent-accent" />Sí</label>
+              <label class="flex items-center gap-2 text-ui"><input type="radio" name="p" class="size-[18px] accent-accent" />No</label>
+            </div>
+          </fieldset>
+          <button type="button" class="mt-4 h-10 w-full rounded-xs bg-accent text-ui font-semibold text-on-accent hover:bg-accent-hover">Votar</button>
+          <div class="mt-4 space-y-2" aria-label="Resultados">
+            <div><div class="flex justify-between text-ui-sm"><span>Sí</span><span>62%</span></div><div class="h-2 bg-surface"><div class="h-2 w-[62%] bg-accent"></div></div></div>
+            <div><div class="flex justify-between text-ui-sm"><span>No</span><span>38%</span></div><div class="h-2 bg-surface"><div class="h-2 w-[38%] bg-accent"></div></div></div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============================ Panel -->
+    <section aria-labelledby="h-admin">
+      <h2 id="h-admin" class="border-b-2 border-text pb-2 font-display text-heading">Panel</h2>
+      <div class="mt-6 grid gap-4 sm:grid-cols-3">
+        <div class="rounded-xs border border-border bg-raised p-5"><p class="eyebrow text-text-muted">Publicadas hoy</p><p class="font-display text-heading">18</p><p class="text-caption text-success">↑ 4 frente a ayer</p></div>
+        <div class="rounded-xs border border-border bg-raised p-5"><p class="eyebrow text-text-muted">Programadas</p><p class="font-display text-heading">6</p><p class="text-caption text-text-muted">próxima a las 3:00 p. m.</p></div>
+        <div class="rounded-xs border border-border bg-raised p-5"><p class="eyebrow text-text-muted">Borradores</p><p class="font-display text-heading">11</p><p class="text-caption text-danger">↓ 3 sin editar en 7 días</p></div>
+      </div>
+      <div class="mt-6 overflow-x-auto rounded-xs border border-border bg-raised">
+        <table class="w-full min-w-[640px] text-left text-ui">
+          <thead class="eyebrow text-text-muted"><tr class="border-b border-border"><th class="px-4 py-3" aria-sort="none">Título</th><th class="px-4 py-3">Sección</th><th class="px-4 py-3">Estado</th><th class="px-4 py-3" aria-sort="descending">Fecha</th><th class="px-4 py-3"><span class="sr-only">Acciones</span></th></tr></thead>
+          <tbody class="divide-y divide-border">
+            <tr class="hover:bg-surface"><td class="px-4 py-3 font-display text-title-sm">El puerto amplía su terminal</td><td class="px-4 py-3">Economía</td><td class="px-4 py-3"><span class="eyebrow rounded-xs bg-success-bg px-2 py-1 text-success">Publicado</span></td><td class="px-4 py-3 text-text-muted">25 oct. 11:25</td><td class="px-4 py-3 text-right"><button class="grid size-8 place-items-center rounded-xs hover:bg-surface-tint" aria-label="Acciones de la nota"><i data-lucide="ellipsis" class="size-4"></i></button></td></tr>
+            <tr class="hover:bg-surface"><td class="px-4 py-3 font-display text-title-sm">Becas de verano en ciencias</td><td class="px-4 py-3">País</td><td class="px-4 py-3"><span class="eyebrow rounded-xs bg-warning-bg px-2 py-1 text-warning">Programado</span></td><td class="px-4 py-3 text-text-muted">25 oct. 15:00</td><td class="px-4 py-3 text-right"><button class="grid size-8 place-items-center rounded-xs hover:bg-surface-tint" aria-label="Acciones de la nota"><i data-lucide="ellipsis" class="size-4"></i></button></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-6 grid gap-6 md:grid-cols-2">
+        <div class="grid place-items-center rounded-xs border-2 border-dashed border-accent bg-surface-tint p-8 text-center">
+          <i data-lucide="file-up" class="size-8 text-accent"></i>
+          <p class="mt-2 font-semibold">Suelta aquí un Word, TXT o PDF</p>
+          <p class="text-caption text-text-muted">o <button class="font-semibold text-accent underline">elige un archivo</button> · máximo 10 MB</p>
+        </div>
+        <div class="space-y-3">
+          <div role="status" class="flex items-center gap-3 rounded-sm bg-inverse px-4 py-3 text-ui text-on-inverse shadow-pop"><i data-lucide="circle-check" class="size-4"></i>Nota publicada.</div>
+          <div class="rounded-xs border border-border bg-raised p-4">
+            <div class="flex justify-between text-ui-sm"><span>informe-puerto.docx</span><span class="text-text-muted">Extrayendo texto… 64%</span></div>
+            <div class="mt-2 h-1.5 bg-surface"><div class="h-1.5 w-[64%] bg-accent"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================ Footer -->
+  <footer class="bg-inverse text-on-inverse">
+    <div class="mx-auto grid max-w-content gap-8 px-4 py-12 md:grid-cols-4 md:px-12">
+      <div><p class="font-display text-heading">NoticeCAT</p><p class="mt-2 text-ui-sm text-on-inverse-muted">Noticias con calma.</p></div>
+      <nav aria-label="Secciones del pie"><p class="eyebrow">Secciones</p><ul class="mt-3 space-y-2 text-ui-sm text-on-inverse-muted"><li><a href="#" class="hover:text-on-inverse">País</a></li><li><a href="#" class="hover:text-on-inverse">Economía</a></li><li><a href="#" class="hover:text-on-inverse">Mundo</a></li></ul></nav>
+      <nav aria-label="Servicios"><p class="eyebrow">Servicios</p><ul class="mt-3 space-y-2 text-ui-sm text-on-inverse-muted"><li><a href="#" class="hover:text-on-inverse">RSS</a></li><li><a href="#" class="hover:text-on-inverse">Archivo</a></li><li><a href="#" class="hover:text-on-inverse">Contacto</a></li></ul></nav>
+      <div><p class="eyebrow">Síguenos</p><div class="mt-3 flex gap-2 text-on-inverse-muted"><a href="#" aria-label="Instagram" class="grid size-11 place-items-center border border-inverse-border hover:text-on-inverse md:size-8"><i data-lucide="instagram" class="size-4"></i></a><a href="#" aria-label="RSS" class="grid size-11 place-items-center border border-inverse-border hover:text-on-inverse md:size-8"><i data-lucide="rss" class="size-4"></i></a></div></div>
+    </div>
+    <p class="border-t border-inverse-border py-4 text-center text-caption text-on-inverse-muted">© 2026 NoticeCAT · Aviso legal · Privacidad</p>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+    // muestras de color leídas de las variables del tema
+    const names = ["bg","surface","surface-tint","raised","border","border-input","text","text-muted","accent","accent-hover","on-accent","inverse","inverse-surface","on-inverse-muted","success","success-bg","warning","warning-bg","neutral","neutral-bg","danger","danger-bg"];
+    const css = getComputedStyle(document.documentElement);
+    document.getElementById("swatches").innerHTML = names.map(n =>
+      `<div><div class="h-14 rounded-xs border border-border" style="background:var(--color-${n})"></div>
+       <p class="mt-1 text-caption font-semibold">${n}</p>
+       <p class="text-caption text-text-muted">${css.getPropertyValue("--color-" + n).trim()}</p></div>`).join("");
+  </script>
+</body>
+</html>

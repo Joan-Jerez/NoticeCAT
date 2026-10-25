@@ -1,0 +1,54 @@
+feature,area,priority,original,clone,notes
+Portada con nota destacada y listas por sección,portada,must,yes,yes,destacada + Lo último + bloques por sección
+Tarjeta de nota con sección hora titular y miniatura,portada,must,yes,yes,5 variantes; sin foto pasa a compacta
+Header con secciones y mega menú de subsecciones,navegación,must,yes,yes,"teclado: Enter abre, Esc cierra y devuelve el foco"
+Menú móvil desplegable,navegación,must,yes,yes,cajón con acordeón; probado en e2e
+Pie con secciones redes apps y legal,navegación,must,yes,partial,sin enlaces a apps (fuera de alcance)
+Página de sección con lista y cargar más,sección,must,yes,yes,+ columna Lo último
+Subsecciones anidadas bajo una sección,sección,must,yes,yes,pestañas de subsección
+Artículo con H1 bajada firma fecha y tiempo de lectura,artículo,must,yes,yes,
+Foto de portada con pie y crédito,artículo,must,yes,yes,
+Cuerpo en texto rico con subtítulos listas y negritas,artículo,must,yes,partial,"render seguro listo; editor provisional en texto con marcas, Tiptap pendiente"
+Migas de pan,artículo,must,yes,yes,
+Etiquetas (temas) al pie del artículo,artículo,must,yes,yes,
+Barra de compartir (WhatsApp Facebook X email Telegram nativo),artículo,must,yes,yes,Web Share en móvil
+Página de autor con foto bio y lista,autor,must,yes,yes,
+Página de etiqueta con lista,etiqueta,must,yes,yes,/tema/{slug}
+Última hora en orden cronológico con bajada,última hora,must,yes,yes,
+URLs limpias con sección fecha slug e id,seo,must,yes,yes,301/308 a la canónica si cambia el slug
+Metadatos OG y Twitter para compartir,seo,must,yes,partial,OG y Twitter listos; faltan sitemaps
+Admin: crear editar y borrar notas,admin,must,no,yes,datos en JSON local hasta /replica-backend
+Admin: estados borrador programado publicado,admin,must,no,yes,programadas salen solas a su hora
+Admin: subir imágenes con pie y crédito,admin,must,no,partial,se elige de la biblioteca; subir llega con Storage
+Admin: gestionar secciones autores y etiquetas,admin,must,no,no,solo datos de prueba
+Caja de autor al final del artículo,artículo,should,yes,yes,
+Caja relacionada dentro del cuerpo,artículo,should,yes,yes,[[nota:ID]] en el editor
+Ciudad como etiqueta en la línea de fecha,artículo,should,yes,yes,
+Archivo por fecha (listado de un día),archivo,should,yes,yes,con día anterior y siguiente
+Fecha del artículo enlaza al archivo del día,archivo,should,yes,yes,
+Feeds RSS por sección,rss,should,yes,yes,
+Directorio de feeds RSS,rss,should,yes,yes,
+Ampliar foto de portada,artículo,should,yes,yes,<dialog>
+Bloque de opinión y columnistas con foto,portada,should,yes,yes,
+Etiqueta de contenido patrocinado,portada,should,yes,yes,
+Cuenta de lector con email y contraseña,cuentas,should,yes,partial,"formularios listos, sin envío hasta Supabase Auth"
+Login con Google,cuentas,should,yes,partial,botón deshabilitado hasta Supabase Auth
+Recuperar contraseña,cuentas,should,yes,partial,formulario sin envío
+Admin: importar Word TXT PDF,admin,should,no,no,página provisional
+Seguir un tema,cuentas,could,yes,partial,botón lleva al login; guardar el seguimiento requiere cuentas
+Login con Facebook,cuentas,could,yes,partial,botón deshabilitado
+Encuestas con votación,engagement,could,yes,yes,un voto por navegador; índice único en la versión real
+Bloque de videos con icono de reproducción,portada,could,yes,no,
+Carrusel en bloque de sección,portada,could,yes,no,
+Especiales (banners de investigaciones),portada,could,yes,no,
+Espacios de anuncio por posición,monetización,could,yes,no,
+Archivo histórico por año,archivo,could,yes,yes,/archivo/{año}
+Admin: varios medios en una instalación (multi-tenant),admin,could,no,partial,aislamiento por dominio probado; falta alta de medios y facturación
+Búsqueda,navegación,could,no,yes,sin tildes; tsvector en la versión real
+Contenido de noticias fotos y videos,contenido,could,yes,skip,propiedad de GDL
+Marca logo y nombres de columnas y servicios,marca,could,yes,skip,marcas de GDL
+Edición impresa ePaper,producto,could,yes,skip,producto de imprenta no software
+Edición USA (multi-edición),producto,could,yes,skip,fuera de alcance; modelar luego como multi-sitio
+Apps móviles,producto,could,yes,skip,alcance solo web
+Efemérides cumpleaños y resultados deportivos,servicios,could,yes,skip,dependen de datos propios o licenciados
+Contenido patrocinado de anunciantes concretos,monetización,could,yes,skip,acuerdos comerciales no producto
