@@ -55,9 +55,12 @@ def build(tokens):
         out.append(f"  --shadow-{name}: {value};")
 
     out.append("")
-    out.append(f"  --duration-fast: {tokens['motion']['fast']};")
-    out.append(f"  --duration-base: {tokens['motion']['base']};")
-    out.append(f"  --ease-out: {tokens['motion']['ease']};")
+    m = tokens["motion"]
+    for name in ("fast", "base", "slow"):
+        out.append(f"  --duration-{name}: {m[name]};")
+    out.append(f"  --ease-out: {m['ease']};")
+    out.append(f"  --ease-soft: {m['ease-soft']};")
+    out.append(f"  --motion-distance: {m['distance']};")
 
     layout = tokens["layout"]
     out.append("")

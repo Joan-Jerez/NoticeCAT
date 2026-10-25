@@ -22,13 +22,11 @@ export default async function AuthorPage({ params }: Props) {
 
   return (
     <div className="container-page pt-8 md:pt-12">
-      <header className="flex flex-col items-start gap-5 border-b-2 border-text pb-6 sm:flex-row sm:items-center">
+      <header className="animate-fade-in flex flex-col items-center border-b-4 border-double border-text pb-6 text-center">
         <Avatar name={author.name} photo={author.photo} size={96} />
-        <div>
-          <p className="eyebrow text-accent">{author.isColumnist ? (author.columnName ?? "Columnista") : "Autor"}</p>
-          <h1 className="mt-1 font-display text-heading-lg md:text-headline">{author.name}</h1>
-          {author.bio && <p className="mt-2 max-w-article font-serif text-body-sm text-text-muted">{author.bio}</p>}
-        </div>
+        <p className="mt-4 font-serif text-ui italic text-accent">{author.isColumnist ? (author.columnName ?? "Columnista") : "Autor"}</p>
+        <h1 className="mt-1 font-display text-heading-lg md:text-headline">{author.name}</h1>
+        {author.bio && <p className="mt-2 max-w-article font-serif text-body-sm text-text-muted">{author.bio}</p>}
       </header>
       <Listing org={org} page={page} filter={filter} empty={{ title: "Sin notas publicadas", text: `${author.name} todavía no tiene notas publicadas.` }} />
     </div>

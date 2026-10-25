@@ -1,12 +1,15 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { Newspaper } from "lucide-react";
 import { getActivePoll, getSectionTree, listArticles } from "@/lib/data";
 import { getCurrentOrg } from "@/lib/org";
-import { cookies } from "next/headers";
+import { cx } from "@/lib/cx";
 import type { ArticleView } from "@/lib/types";
 import { BlockHeading, EmptyState } from "@/components/ui/misc";
-import { StoryCard, StoryList } from "@/components/news/story-card";
+import { NumberedList, StoryCard } from "@/components/news/story-card";
 import { PollBox } from "@/components/news/poll-box";
+
+const i = (n: number) => ({ "--reveal-i": n }) as React.CSSProperties;
 
 export default async function Home() {
   const org = await getCurrentOrg();
@@ -30,75 +33,105 @@ export default async function Home() {
     out.forEach((a) => used.add(a.id));
     return out;
   };
+  const news = latest.filter((a) => !a.isSponsored && a.section.slug !== "opinion");
+  const recent = take(news, 5);
+  const briefs = take(news, 4);
 
-  const top = take(latest.filter((a) => !a.isSponsored && a.section.slug !== "opinion"), 5);
   const tree = await getSectionTree(org.id);
   const opinionSection = tree.find((s) => s.slug === "opinion");
   const opinion = opinionSection ? (await listArticles(org.id, { sectionId: opinionSection.id }, { limit: 3 })).items : [];
   opinion.forEach((a) => used.add(a.id));
   const sponsored = latest.filter((a) => a.isSponsored).slice(0, 1);
+  sponsored.forEach((a) => used.add(a.id));
 
-  const blocks = await Promise.all(
-    tree
-      .filter((s) => s.slug !== "opinion")
-      .map(async (s) => ({ section: s, items: (await listArticles(org.id, { sectionId: s.id, excludeIds: [...used] }, { limit: 4 })).items })),
-  );
+  const blocks = (
+    await Promise.all(
+      tree
+        .filter((s) => s.slug !== "opinion")
+        .map(async (s) => ({ section: s, items: (await listArticles(org.id, { sectionId: s.id, excludeIds: [...used] }, { limit: 4 })).items })),
+    )
+  ).filter((b) => b.items.length >= 2);
 
   const poll = await getActivePoll(org.id);
-  const voted = poll ? (await cookies()).get(`voto-${poll.id}`)?.value ?? null : null;
+  const voted = poll ? ((await cookies()).get(`voto-${poll.id}`)?.value ?? null) : null;
 
   return (
     <div className="container-page space-y-16 pt-8 md:pt-10">
       <h1 className="sr-only">{org.name}: portada</h1>
 
-      <section aria-label="Noticias principales" className="grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-        <StoryCard article={lead} org={org} variant="lead" priority />
-        <div className="lg:border-l lg:border-border lg:pl-8">
-          <h2 className="mb-4 border-b-2 border-text pb-2 font-display text-title">Lo último</h2>
-          <StoryList articles={top} org={org} />
-          <Link href="/ultima-hora" className="mt-4 inline-block text-ui-sm font-semibold text-accent hover:underline">
-            Toda la última hora
-          </Link>
+      {/* primera plana: breves | principal | lo más reciente, con filetes de columna */}
+      <section aria-label="Primera plana" className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_minmax(0,1fr)] lg:gap-0">
+        <div className="lg:order-2 lg:px-8" data-reveal>
+          <StoryCard article={lead} org={org} variant="lead" priority />
         </div>
+        <aside aria-labelledby="h-breves" className="lg:order-1 lg:border-r lg:border-border lg:pr-8">
+          <h2 id="h-breves" className="mb-4 border-b border-text pb-2 font-display text-title">En breve</h2>
+          <ul className="divide-y divide-border">
+            {briefs.map((a, n) => (
+              <li key={a.id} data-reveal style={i(n)} className="py-4 first:pt-0 last:pb-0">
+                <StoryCard article={a} org={org} variant="compact" withDek />
+              </li>
+            ))}
+          </ul>
+        </aside>
+        <aside aria-labelledby="h-reciente" className="lg:order-3 lg:border-l lg:border-border lg:pl-8">
+          <h2 id="h-reciente" className="mb-4 border-b border-text pb-2 font-display text-title">Lo más reciente</h2>
+          <NumberedList articles={recent} org={org} />
+          <Link href="/ultima-hora" className="group mt-4 inline-flex items-center gap-1 font-serif text-ui italic text-accent">
+            <span className="link-grow">Toda la última hora</span>
+            <span aria-hidden className="transition-transform duration-base ease-soft group-hover:translate-x-1">→</span>
+          </Link>
+        </aside>
       </section>
 
       {(opinion.length > 0 || poll) && (
-        <section aria-labelledby="h-opinion" className="grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-          {opinion.length > 0 && (
-            <div>
-              <BlockHeading id="h-opinion" href="/opinion">Opinión</BlockHeading>
-              <ul className="grid gap-6 sm:grid-cols-3">
-                {opinion.map((a) => (
-                  <li key={a.id}>
-                    <StoryCard article={a} org={org} variant="opinion" />
+        <section aria-labelledby="h-opinion" data-reveal className="bg-surface-tint px-6 py-10 md:px-12">
+          <BlockHeading id="h-opinion" href="/opinion" linkLabel="Todas las columnas" center>
+            Opinión
+          </BlockHeading>
+          <div className={cx("grid gap-10 md:divide-x md:divide-border md:gap-0", poll ? "md:grid-cols-3" : "md:grid-cols-2")}>
+            {opinion.slice(0, poll ? 2 : 3).map((a, n) => (
+              <div key={a.id} data-reveal style={i(n)} className="md:px-8">
+                <StoryCard article={a} org={org} variant="opinion" />
+              </div>
+            ))}
+            {poll && (
+              <div data-reveal style={i(2)} className="md:px-8">
+                <PollBox poll={poll} votedOptionId={voted} />
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {blocks.map(({ section, items }, b) => {
+        const [main, ...rest] = items;
+        const mirrored = b % 2 === 1;
+        // con pocas notas, dos columnas iguales para no dejar una foto enorme sola
+        const cols = rest.length < 2 ? "lg:grid-cols-2" : mirrored ? "lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]" : "lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]";
+        return (
+          <section key={section.id} aria-labelledby={`h-${section.slug}`} data-reveal>
+            <BlockHeading id={`h-${section.slug}`} href={`/${section.slug}`}>
+              {section.name}
+            </BlockHeading>
+            <div className={cx("grid gap-8 lg:gap-0", cols)}>
+              <div className={cx(mirrored ? "lg:order-2 lg:border-l lg:border-border lg:pl-8" : "lg:border-r lg:border-border lg:pr-8")}>
+                <StoryCard article={main!} org={org} variant="feature" />
+              </div>
+              <ul className={cx("divide-y divide-border", mirrored ? "lg:order-1 lg:pr-8" : "lg:pl-8")}>
+                {rest.map((a, n) => (
+                  <li key={a.id} data-reveal style={i(n + 1)} className="py-4 first:pt-0 last:pb-0">
+                    <StoryCard article={a} org={org} variant="compact" withDek />
                   </li>
                 ))}
               </ul>
             </div>
-          )}
-          {poll && <PollBox poll={poll} votedOptionId={voted} />}
-        </section>
-      )}
-
-      {blocks
-        .filter((b) => b.items.length >= 2)
-        .map(({ section, items }) => (
-          <section key={section.id} aria-labelledby={`h-${section.slug}`}>
-            <BlockHeading id={`h-${section.slug}`} href={`/${section.slug}`}>
-              {section.name}
-            </BlockHeading>
-            <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-              {items.map((a) => (
-                <li key={a.id}>
-                  <StoryCard article={a} org={org} variant="standard" />
-                </li>
-              ))}
-            </ul>
           </section>
-        ))}
+        );
+      })}
 
       {sponsored.length > 0 && (
-        <section aria-label="Contenido patrocinado" className="rounded-xs border border-border bg-surface p-6">
+        <section aria-label="Contenido patrocinado" data-reveal className="border border-border bg-surface p-6">
           <StoryCard article={sponsored[0]!} org={org} variant="row" />
         </section>
       )}

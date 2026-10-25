@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { vote } from "@/app/(public)/actions";
 import type { Poll } from "@/lib/types";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,13 @@ export function PollBox({ poll, votedOptionId }: { poll: Poll; votedOptionId: st
   const [options, setOptions] = useState(poll.options);
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
+  // las barras crecen desde cero al mostrarse los resultados
+  const [grown, setGrown] = useState(false);
+  useEffect(() => {
+    if (!voted) return;
+    const t = requestAnimationFrame(() => setGrown(true));
+    return () => cancelAnimationFrame(t);
+  }, [voted]);
   const closed = !!poll.endsAt && new Date(poll.endsAt) < new Date();
   const total = options.reduce((n, o) => n + o.votes, 0);
 
@@ -27,7 +34,7 @@ export function PollBox({ poll, votedOptionId }: { poll: Poll; votedOptionId: st
   }
 
   return (
-    <section aria-labelledby="h-encuesta" className="self-start rounded-xs border border-border bg-raised p-5">
+    <section aria-labelledby="h-encuesta" className="self-start border border-border bg-raised p-5">
       <p className="eyebrow text-accent">Encuesta</p>
       {voted || closed ? (
         <>
@@ -45,7 +52,7 @@ export function PollBox({ poll, votedOptionId }: { poll: Poll; votedOptionId: st
                     <span>{pct} %</span>
                   </div>
                   <div className="mt-1 h-2 bg-surface" aria-hidden>
-                    <div className="h-2 bg-accent" style={{ width: `${pct}%` }} />
+                    <div className="h-2 bg-accent transition-[width] duration-slow ease-soft" style={{ width: grown || closed ? `${pct}%` : "0%" }} />
                   </div>
                 </li>
               );

@@ -82,7 +82,7 @@ test("el editor muestra errores en los campos obligatorios", async ({ page }, in
 
 test("un medio no ve las notas del otro", async ({ page }) => {
   await page.goto("/?org=costa");
-  await expect(page.getByRole("link", { name: "Diario Costa Norte" })).toBeVisible();
+  await expect(page.getByRole("banner").getByRole("link", { name: "Diario Costa Norte" }).first()).toBeVisible();
   await expect(page.getByText("El puerto amplía su terminal")).toHaveCount(0);
   const res = await page.goto("/economia/2026/10/25/x/1001");
   expect(res?.status()).toBe(404);

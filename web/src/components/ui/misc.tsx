@@ -73,17 +73,29 @@ export function EmptyState({ icon: Icon, title, children, action }: { icon: Luci
   );
 }
 
-export function BlockHeading({ id, children, href, linkLabel = "Ver todo" }: { id?: string; children: ReactNode; href?: string; linkLabel?: string }) {
+// Encabezado de bloque: filete doble arriba, como una sección de periódico.
+export function BlockHeading({ id, children, href, linkLabel = "Ver todo", center = false }: { id?: string; children: ReactNode; href?: string; linkLabel?: string; center?: boolean }) {
   return (
-    <div className="mb-5 flex items-end justify-between gap-4 border-b-2 border-text pb-2">
+    <div className={cx("mb-6 flex items-baseline gap-4 border-t-4 border-double border-text pt-3", center ? "flex-col items-center text-center" : "justify-between")}>
       <h2 id={id} className="font-display text-heading">
         {children}
       </h2>
       {href && (
-        <Link href={href} className="text-ui-sm font-semibold text-accent hover:underline">
-          {linkLabel}
+        <Link href={href} className="group inline-flex items-center gap-1 font-serif text-ui italic text-accent">
+          <span className="link-grow">{linkLabel}</span>
+          <span aria-hidden className="transition-transform duration-base ease-soft group-hover:translate-x-1">→</span>
         </Link>
       )}
+    </div>
+  );
+}
+
+export function Ornament({ className }: { className?: string }) {
+  return (
+    <div aria-hidden className={cx("flex items-center justify-center gap-3 text-accent", className)}>
+      <span className="h-px w-12 bg-border" />
+      <span className="size-1.5 rotate-45 bg-current" />
+      <span className="h-px w-12 bg-border" />
     </div>
   );
 }

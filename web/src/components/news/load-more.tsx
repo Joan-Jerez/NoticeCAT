@@ -30,7 +30,7 @@ export function LoadMore({ initialCursor, load }: { initialCursor: string | null
   return (
     <>
       {pages.map((html, i) => (
-        <div key={i} ref={i === pages.length - 1 ? firstNew : undefined} className="mt-4 border-t border-border pt-4">
+        <div key={i} ref={i === pages.length - 1 ? firstNew : undefined} className="animate-fade-in mt-4 border-t border-border pt-4">
           {html}
         </div>
       ))}

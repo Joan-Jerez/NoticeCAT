@@ -20,7 +20,7 @@ const sizes: Record<Size, string> = {
 
 export function buttonClass(variant: Variant = "primary", size: Size = "md", className?: string) {
   return cx(
-    "inline-flex shrink-0 items-center justify-center gap-2 rounded-xs transition-colors duration-fast",
+    "inline-flex shrink-0 items-center justify-center gap-2 rounded-xs transition-[color,background-color,border-color,transform] duration-base ease-soft active:translate-y-px",
     "disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50",
     variants[variant],
     sizes[size],

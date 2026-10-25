@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { Check, Facebook, Link as LinkIcon, Mail, MessageCircle, Send, Share2, Twitter } from "lucide-react";
 import { iconButtonClass } from "@/components/ui/button";
+import { cx } from "@/lib/cx";
 
-export function ShareBar({ url, title }: { url: string; title: string }) {
+export function ShareBar({ url, title, vertical = false }: { url: string; title: string; vertical?: boolean }) {
   const [copied, setCopied] = useState(false);
   const [canShare, setCanShare] = useState(false);
   useEffect(() => setCanShare("share" in navigator), []);
@@ -32,14 +33,15 @@ export function ShareBar({ url, title }: { url: string; title: string }) {
   }
 
   return (
-    <div className="flex items-center gap-1">
-      {canShare && (
+    <div className={cx("flex items-center gap-1", vertical && "flex-col border-y border-border py-2")}>
+      {vertical && <span className="eyebrow pb-1 text-text-muted">Compartir</span>}
+      {canShare && !vertical && (
         <button type="button" aria-label="Compartir" title="Compartir" className={iconButtonClass("md:hidden")} onClick={() => navigator.share({ title, url: abs() }).catch(() => {})}>
           <Share2 className="size-4" aria-hidden />
         </button>
       )}
       {networks.map(({ label, icon: Icon, href }) => (
-        <button key={label} type="button" aria-label={label} title={label} onClick={open(href)} className={iconButtonClass(canShare ? "hidden md:grid" : undefined)}>
+        <button key={label} type="button" aria-label={label} title={label} onClick={open(href)} className={iconButtonClass(cx(canShare && !vertical && "hidden md:grid", "transition-colors duration-base hover:text-accent"))}>
           <Icon className="size-4" aria-hidden />
         </button>
       ))}

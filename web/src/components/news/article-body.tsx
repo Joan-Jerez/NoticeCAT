@@ -42,11 +42,11 @@ async function Related({ orgId, articleId }: { orgId: string; articleId: string 
   );
 }
 
-function Block({ node, orgId }: { node: RichNode; orgId: string }) {
+function Block({ node, orgId, first }: { node: RichNode; orgId: string; first: boolean }) {
   switch (node.type) {
     case "paragraph":
       return (
-        <p>
+        <p className={first ? "drop-cap" : undefined}>
           <Inline nodes={node.content} />
         </p>
       );
@@ -86,7 +86,7 @@ export function ArticleBody({ doc, orgId }: { doc: RichNode; orgId: string }) {
   return (
     <div className="space-y-6 font-serif text-body">
       {blocks.map((b, i) => (
-        <Block key={i} node={b} orgId={orgId} />
+        <Block key={i} node={b} orgId={orgId} first={i === 0} />
       ))}
     </div>
   );

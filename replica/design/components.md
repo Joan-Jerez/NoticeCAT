@@ -278,3 +278,32 @@ Dropzone
   a11y      también es un botón que abre el selector de archivos
   used on   A03, imagen de portada en A02
 ```
+
+---
+
+## Movimiento
+
+Corto, de una sola dirección, sin rebotes. Tokens: `fast` 150ms, `base` 250ms,
+`slow` 600ms, curva `ease-soft`, desplazamiento 8px. Con "reducir movimiento"
+del sistema solo queda el cambio de opacidad, instantáneo.
+
+```
+Aparición (data-reveal)   bloques y tarjetas suben 8px y aparecen al entrar en pantalla,
+                          escalonados 70ms; lo visible al cargar no se anima (sin parpadeo)
+Subrayado (link-grow)     titulares: filete de 1px que crece desde la izquierda, 600ms
+Foto (media-zoom)         escala 1.03 al pasar por la tarjeta, 600ms
+Menú de secciones         subrayado que se abre desde el centro; panel con fundido de 8px
+Barra compacta            escritorio: baja desde arriba al pasar los 260px de scroll
+Cajón móvil               se desliza desde la izquierda
+Lectura                   filete de 2px arriba que avanza con la nota
+Encuesta                  las barras de resultados crecen desde cero
+Botones                   bajan 1px al presionarlos
+```
+
+## Identidad editorial (distinta del original)
+
+Cabecera de periódico con el nombre centrado entre filetes dobles; secciones en
+versalitas; antetítulos en cursiva serif (no etiquetas en mayúsculas); portada
+en tres columnas con filetes verticales (breves, principal, lo más reciente
+numerado); bloques de sección alternados (foto grande + notas de texto);
+artículo centrado con adorno y capitular.

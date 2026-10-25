@@ -19,7 +19,7 @@ export function Figure({ image, priority = false }: { image: Img; priority?: boo
     <figure>
       <div className="relative aspect-video overflow-hidden bg-surface-tint">
         <Image src={image.src} alt={image.alt} fill priority={priority} sizes="(min-width: 768px) 760px, 100vw" className="object-cover" />
-        <button type="button" onClick={() => dialog.current?.showModal()} aria-label="Ampliar foto" title="Ampliar foto" className="absolute right-2 top-2 grid size-11 place-items-center rounded-xs bg-raised/90 hover:bg-raised md:size-8">
+        <button type="button" onClick={() => dialog.current?.showModal()} aria-label="Ampliar foto" title="Ampliar foto" className="absolute right-2 top-2 grid size-11 place-items-center rounded-xs bg-raised/90 opacity-80 transition-opacity duration-base hover:bg-raised hover:opacity-100 md:size-8">
           <Expand className="size-4" aria-hidden />
         </button>
       </div>
@@ -28,7 +28,7 @@ export function Figure({ image, priority = false }: { image: Img; priority?: boo
           {image.caption} {image.credit && <span className="eyebrow">Foto: {image.credit}</span>}
         </figcaption>
       )}
-      <dialog ref={dialog} aria-label="Foto ampliada" className="m-auto max-h-none max-w-none bg-transparent p-0 backdrop:bg-scrim/80">
+      <dialog ref={dialog} aria-label="Foto ampliada" className="enter-fade m-auto max-h-none max-w-none bg-transparent p-0 backdrop:bg-scrim/80">
         <div className="relative">
           <Image src={image.src} alt={image.alt} width={image.width} height={image.height} className="max-h-[90vh] w-auto max-w-[95vw]" />
           <form method="dialog">
