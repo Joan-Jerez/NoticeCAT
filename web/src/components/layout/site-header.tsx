@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Search, User } from "lucide-react";
+import { Search, ShieldCheck, User } from "lucide-react";
 import { getSectionTree } from "@/lib/data";
 import { getSessionUser } from "@/lib/auth";
+import { getPlatformAdmin } from "@/lib/platform";
 import type { Organization } from "@/lib/types";
 import { buttonClass, iconButtonClass } from "@/components/ui/button";
 import { MobileMenu, SectionNav, StickyHeader } from "./section-nav";
@@ -11,7 +12,7 @@ import { MobileMenu, SectionNav, StickyHeader } from "./section-nav";
 export async function SiteHeader({ org }: { org: Organization }) {
   const tree = (await getSectionTree(org.id)).filter((s) => s.inMenu);
   const menu = tree.map((s) => ({ name: s.name, href: `/${s.slug}`, children: s.children.filter((c) => c.inMenu).map((c) => ({ name: c.name, href: `/${s.slug}/${c.slug}` })) }));
-  const user = await getSessionUser();
+  const [user, it] = await Promise.all([getSessionUser(), getPlatformAdmin()]);
 
   return (
     <StickyHeader>
@@ -19,7 +20,7 @@ export async function SiteHeader({ org }: { org: Organization }) {
         Saltar al contenido
       </a>
       <div className="container-page relative flex h-16 items-center gap-3 transition-[height] duration-base ease-soft group-data-scrolled/header:h-14 md:gap-6">
-        <MobileMenu sections={menu} orgName={org.name} signedIn={!!user} />
+        <MobileMenu sections={menu} orgName={org.name} signedIn={!!user} it={!!it} />
         <Link href="/" className="group flex min-w-0 items-center gap-2">
           <span aria-hidden className="grid size-7 shrink-0 place-items-center rounded-md sm:size-8 bg-accent font-display text-title-sm font-semibold text-on-accent transition-transform duration-base ease-soft group-hover:-rotate-6">
             {org.name.replace(/^(La|El|Los|Las|Diario)\s+/i, "").charAt(0)}
@@ -33,10 +34,17 @@ export async function SiteHeader({ org }: { org: Organization }) {
           </Link>
           {/* en móvil la cuenta está dentro del menú lateral */}
           <div className="hidden md:block">
-            <Link href={user ? "/cuenta" : "/cuenta/entrar"} className={buttonClass("secondary", "sm")}>
-              <User className="size-3.5" aria-hidden />
-              {user ? "Mi cuenta" : "Entrar"}
-            </Link>
+            {it ? (
+              <Link href="/plataforma" className={buttonClass("primary", "sm")}>
+                <ShieldCheck className="size-3.5" aria-hidden />
+                Panel IT
+              </Link>
+            ) : (
+              <Link href={user ? "/cuenta" : "/cuenta/entrar"} className={buttonClass("secondary", "sm")}>
+                <User className="size-3.5" aria-hidden />
+                {user ? "Mi cuenta" : "Entrar"}
+              </Link>
+            )}
           </div>
         </div>
       </div>

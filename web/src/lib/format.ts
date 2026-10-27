@@ -116,3 +116,9 @@ export function utcToZonedLocal(iso: string, timezone: string) {
   const get = (t: string) => parts.find((p) => p.type === t)!.value;
   return `${get("year")}-${get("month")}-${get("day")}T${get("hour")}:${get("minute")}`;
 }
+
+// Fecha corta para el panel de plataforma, que no depende de un medio.
+export function fmtDate(iso: string | null) {
+  if (!iso) return "—";
+  return new Intl.DateTimeFormat("es-DO", { dateStyle: "medium", timeZone: "America/Santo_Domingo" }).format(new Date(iso));
+}

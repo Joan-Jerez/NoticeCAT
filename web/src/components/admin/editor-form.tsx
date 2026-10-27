@@ -11,6 +11,7 @@ import type { ArticleStatus, Image as Img } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { describedBy, Field, Input, Select, Textarea } from "@/components/ui/field";
 import { StatusChip } from "@/components/ui/misc";
+import { BodyEditor } from "./body-editor";
 
 export interface EditorInitial {
   id: string | null;
@@ -50,7 +51,7 @@ function SubmitButtons({ canPublish, status }: { canPublish: boolean; status: Ar
   );
 }
 
-export function EditorForm({ initial, sections, authors, places, topics, covers, canPublish, justCreated }: { initial: EditorInitial; sections: (Option & { depth: number })[]; authors: Option[]; places: Option[]; topics: Option[]; covers: Img[]; canPublish: boolean; justCreated: boolean }) {
+export function EditorForm({ initial, sections, authors, places, topics, covers, related, canPublish, justCreated }: { initial: EditorInitial; sections: (Option & { depth: number })[]; authors: Option[]; places: Option[]; topics: Option[]; covers: Img[]; related: { id: string; title: string }[]; canPublish: boolean; justCreated: boolean }) {
   const [state, action] = useActionState<EditorState, FormData>(submitArticle, {});
   const [cover, setCover] = useState(initial.coverImageId);
   const [title, setTitle] = useState(initial.title);
@@ -95,11 +96,11 @@ export function EditorForm({ initial, sections, authors, places, topics, covers,
           error={fe.body}
           hint={
             <>
-              Deja una línea en blanco entre párrafos. <code>## </code>subtítulo, <code>- </code>lista, <code>&gt; </code>cita, <code>**negrita**</code>, <code>*cursiva*</code>, <code>[texto](https://…)</code>, <code>[[nota:ID]]</code> caja «Lee además».
+              Selecciona texto y usa los botones, o los atajos Ctrl+B, Ctrl+I y Ctrl+K. Para un párrafo nuevo, deja una línea en blanco (Enter dos veces).
             </>
           }
         >
-          <Textarea id="body" name="body" rows={18} defaultValue={initial.body} aria-invalid={!!fe.body || undefined} aria-describedby={describedBy("body", fe.body, true)} className="font-serif text-body" />
+          <BodyEditor defaultValue={initial.body} related={related.filter((r) => r.id !== initial.id)} invalid={!!fe.body} describedBy={describedBy("body", fe.body, true)} />
         </Field>
       </div>
 

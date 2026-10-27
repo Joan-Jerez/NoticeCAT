@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getTagBySlug, listArticles, searchArticles, votePoll, type ArticleFilter } from "@/lib/data";
+import { audit } from "@/lib/audit";
 import { getSessionUser, rateLimit } from "@/lib/auth";
 import { setFollowing } from "@/lib/follows";
 import { getCurrentOrg } from "@/lib/org";
@@ -38,6 +39,8 @@ export async function toggleFollow(form: FormData) {
   const tag = await getTagBySlug(org.id, slug);
   if (!tag || tag.kind !== "topic") return;
   if (!(await getSessionUser())) redirect(`/cuenta/entrar?seguir=${encodeURIComponent(slug)}`);
-  await setFollowing(org.id, tag.id, form.get("seguir") === "1");
+  const follow = form.get("seguir") === "1";
+  await setFollowing(org.id, tag.id, follow);
+  await audit({ action: follow ? "topic.followed" : "topic.unfollowed", summary: `${follow ? "Empezó a seguir" : "Dejó de seguir"} el tema «${tag.name}»`, orgId: org.id, targetType: "tag", targetId: tag.id });
   revalidatePath(`/tema/${slug}`);
 }

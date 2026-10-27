@@ -38,14 +38,19 @@ export async function clientIp() {
   return h.get("x-forwarded-for")?.split(",")[0]?.trim() || h.get("x-real-ip") || "local";
 }
 
-// Límite por IP (hash, nunca la IP en claro) con ventana fija en la base.
-// Sin Supabase no hay dónde contarlo y deja pasar.
-export async function rateLimit(action: string, max: number, windowSeconds: number) {
-  if (!supabaseEnabled) return true;
-  const ip = createHash("sha256")
+// IP del cliente como hash con sal: sirve para contar y agrupar sin guardarla en claro.
+export async function hashedIp() {
+  return createHash("sha256")
     .update(`${await clientIp()}|${process.env.NOTICECAT_HASH_SALT ?? ""}`)
     .digest("hex")
     .slice(0, 32);
+}
+
+// Límite por IP con ventana fija en la base.
+// Sin Supabase no hay dónde contarlo y deja pasar.
+export async function rateLimit(action: string, max: number, windowSeconds: number) {
+  if (!supabaseEnabled) return true;
+  const ip = await hashedIp();
   const { data, error } = await serviceClient().rpc("hit_rate_limit", { p_key: `${action}:${ip}`, p_max: max, p_window_seconds: windowSeconds });
   if (error) throw new Error(`Supabase (límite de uso): ${error.message}`);
   return data === true;

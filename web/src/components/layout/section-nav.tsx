@@ -133,7 +133,7 @@ export function SectionNav({ sections }: { sections: Item[] }) {
 }
 
 // Móvil y pantallas medianas: cajón lateral con las secciones en acordeón.
-export function MobileMenu({ sections, orgName, signedIn }: { sections: Item[]; orgName: string; signedIn: boolean }) {
+export function MobileMenu({ sections, orgName, signedIn, it = false }: { sections: Item[]; orgName: string; signedIn: boolean; it?: boolean }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
   const isCurrent = useCurrent();
@@ -195,8 +195,8 @@ export function MobileMenu({ sections, orgName, signedIn }: { sections: Item[]; 
           ))}
         </ul>
         <div className="border-t border-border px-4 py-4">
-          <Link href={signedIn ? "/cuenta" : "/cuenta/entrar"} className="press flex h-11 items-center justify-center rounded-pill bg-accent text-ui font-semibold text-on-accent hover:bg-accent-hover">
-            {signedIn ? "Mi cuenta" : "Entrar"}
+          <Link href={it ? "/plataforma" : signedIn ? "/cuenta" : "/cuenta/entrar"} className="press flex h-11 items-center justify-center rounded-pill bg-accent text-ui font-semibold text-on-accent hover:bg-accent-hover">
+            {it ? "Panel IT" : signedIn ? "Mi cuenta" : "Entrar"}
           </Link>
         </div>
       </dialog>

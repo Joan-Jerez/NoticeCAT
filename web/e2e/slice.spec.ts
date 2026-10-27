@@ -21,7 +21,7 @@ test("una editora publica una nota y el lector la ve", async ({ page }, info) =>
   const title = `Nota de prueba ${Date.now()}`;
 
   await page.goto("/admin/notas/nueva");
-  await page.getByLabel("Título").fill(title);
+  await page.getByLabel("Título", { exact: true }).fill(title);
   await page.getByLabel("Bajada").fill("Una bajada escrita en la prueba.");
   await page.getByLabel("Texto").fill("Primer párrafo con **negrita**.\n\n## Un subtítulo\n\n- uno\n- dos");
   await page.getByLabel("Sección").selectOption({ label: "— Vivienda" });
@@ -54,7 +54,7 @@ test("una nota programada no se ve hasta su hora", async ({ page }, info) => {
   test.skip(info.project.name !== "escritorio");
   const title = `Programada ${Date.now()}`;
   await page.goto("/admin/notas/nueva");
-  await page.getByLabel("Título").fill(title);
+  await page.getByLabel("Título", { exact: true }).fill(title);
   await page.getByLabel("Texto").fill("Sale mañana.");
   await page.getByLabel("Sección").selectOption({ label: "Ciencia" });
   await page.getByLabel("Programar para").fill("2099-01-01T08:00");
@@ -76,7 +76,7 @@ test("el editor muestra errores en los campos obligatorios", async ({ page }, in
   await page.goto("/admin/notas/nueva");
   await page.getByRole("button", { name: "Guardar borrador" }).click();
   await expect(page.getByRole("alert").filter({ hasText: "Revisa los campos" })).toBeVisible();
-  await expect(page.getByLabel("Título")).toHaveAttribute("aria-invalid", "true");
+  await expect(page.getByLabel("Título", { exact: true })).toHaveAttribute("aria-invalid", "true");
   await expect(page.getByText("El título es obligatorio.")).toBeVisible();
 });
 

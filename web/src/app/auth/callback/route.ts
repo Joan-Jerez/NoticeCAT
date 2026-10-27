@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import type { EmailOtpType } from "@supabase/supabase-js";
+import { audit } from "@/lib/audit";
 import { safeNext } from "@/lib/auth";
 import { getCurrentOrg } from "@/lib/org";
 import { sessionClient, supabaseEnabled } from "@/lib/supabase/server";
@@ -27,5 +28,7 @@ export async function GET(req: NextRequest) {
   await db
     .from("readers")
     .upsert({ org_id: org.id, user_id: data.user.id, display_name: (data.user.user_metadata?.name as string | undefined) ?? null }, { onConflict: "org_id,user_id", ignoreDuplicates: true });
+  const how = code ? "con Google, Facebook o un enlace" : type === "recovery" ? "con un enlace para cambiar la contraseña" : type === "invite" ? "aceptando una invitación" : "confirmando su correo";
+  await audit({ action: "auth.signin_link", summary: `Entró ${how}`, actor: { id: data.user.id, email: data.user.email ?? "" }, orgId: org.id, details: { type: type ?? "code" } });
   return NextResponse.redirect(new URL(next, url));
 }

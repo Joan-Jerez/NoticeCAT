@@ -7,6 +7,7 @@ import { ConflictError, deleteArticle, ForbiddenError, publishArticle, saveArtic
 import { zonedLocalToUtc } from "@/lib/format";
 import { getCurrentOrg, getCurrentStaff } from "@/lib/org";
 import { textToDoc } from "@/lib/richtext";
+import { articleTitle, audit } from "@/lib/audit";
 
 export type EditorState = { error?: string; fieldErrors?: Record<string, string>; savedAt?: string; updatedAt?: string; id?: string };
 
@@ -94,6 +95,17 @@ export async function submitArticle(_prev: EditorState, form: FormData): Promise
     throw e;
   }
 
+  const verb = v.intent === "publish" ? "published" : v.intent === "schedule" ? "scheduled" : v.id ? "saved" : "created";
+  const what = { published: "Publicó", scheduled: "Programó", saved: "Guardó cambios en", created: "Creó el borrador" }[verb];
+  await audit({
+    action: `article.${verb}`,
+    summary: `${what} «${v.title}»${verb === "scheduled" && publishAt ? ` para el ${publishAt.slice(0, 16).replace("T", " ")} UTC` : ""}`,
+    orgId: org.id,
+    targetType: "article",
+    targetId: id,
+    details: { role: staff.role },
+  });
+
   revalidatePath("/", "layout");
   if (!v.id) redirect(`/admin/notas/${id}?creada=1`);
   return { savedAt: new Date().toISOString(), updatedAt, id };
@@ -103,7 +115,9 @@ export async function unpublish(id: string) {
   const org = await getCurrentOrg();
   const staff = await getCurrentStaff();
   if (!staff) return;
+  const title = await articleTitle(id);
   await unpublishArticle(org.id, staff.user.id, id);
+  await audit({ action: "article.unpublished", summary: `Retiró «${title ?? id}» (vuelve a borrador)`, orgId: org.id, targetType: "article", targetId: id });
   revalidatePath("/", "layout");
 }
 
@@ -111,7 +125,9 @@ export async function remove(id: string) {
   const org = await getCurrentOrg();
   const staff = await getCurrentStaff();
   if (!staff) return;
+  const title = await articleTitle(id);
   await deleteArticle(org.id, staff.user.id, id);
+  await audit({ action: "article.deleted", summary: `Borró «${title ?? id}»`, orgId: org.id, targetType: "article", targetId: id });
   revalidatePath("/", "layout");
   redirect("/admin?borrada=1");
 }

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getPlatformAdmin } from "@/lib/platform";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Info } from "lucide-react";
@@ -43,7 +44,7 @@ export default async function AccountPage({ params, searchParams }: Props) {
 
   const key = modo[0] as keyof typeof modes;
   if (!(key in modes) || modo.length > 1) notFound();
-  if (user && key !== "nueva-clave") redirect(safeNext(sp.siguiente));
+  if (user && key !== "nueva-clave") redirect(safeNext(sp.siguiente, (await getPlatformAdmin()) ? "/plataforma" : "/cuenta"));
   if (!user && key === "nueva-clave") redirect("/cuenta/recuperar");
   const m = modes[key];
   const next = safeNext(sp.siguiente, sp.seguir ? `/tema/${encodeURIComponent(sp.seguir)}` : "/cuenta");
