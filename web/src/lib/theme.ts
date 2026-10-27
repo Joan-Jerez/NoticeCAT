@@ -15,7 +15,7 @@ export interface OrgTheme {
   showName: boolean; // con logo: mostrar también el nombre al lado
 }
 
-export const DEFAULT_THEME: OrgTheme = { accent: "#A2441F", paper: "crema", fonts: "revista", corners: "suaves", showName: true };
+export const DEFAULT_THEME: OrgTheme = { accent: "#5A3D82", paper: "blanco", fonts: "revista", corners: "suaves", showName: true };
 
 export const PAPERS: Record<Paper, { label: string; c: Record<string, string> }> = {
   crema: {

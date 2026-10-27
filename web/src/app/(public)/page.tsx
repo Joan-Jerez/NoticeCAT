@@ -36,30 +36,26 @@ export default async function Home() {
   };
   const news = latest.filter((a) => !a.isSponsored && a.section.slug !== "opinion");
   const recent = take(news, 4);
-  // el mosaico necesita foto: una grande y cuatro pequeñas
-  const mosaic = take(news.filter((a) => a.cover), 5);
 
   const tree = await getSectionTree(org.id);
   const opinionSection = tree.find((s) => s.slug === "opinion");
   const opinion = opinionSection ? (await listArticles(org.id, { sectionId: opinionSection.id }, { limit: 3 })).items : [];
   opinion.forEach((a) => used.add(a.id));
-  const sponsored = latest.filter((a) => a.isSponsored).slice(0, 1);
-  sponsored.forEach((a) => used.add(a.id));
 
   const blocks = (
     await Promise.all(
       tree
         .filter((s) => s.slug !== "opinion")
-        .map(async (s) => ({ section: s, items: (await listArticles(org.id, { sectionId: s.id, excludeIds: [...used] }, { limit: 4 })).items })),
+        .map(async (s) => ({ section: s, items: (await listArticles(org.id, { sectionId: s.id, excludeIds: [...used] }, { limit: 3 })).items })),
     )
-  ).filter((b) => b.items.length >= 2);
+  ).filter((b) => b.items.length >= 2).slice(0, 3);
 
   const poll = await getActivePoll(org.id);
   const voted = poll ? ((await cookies()).get(`voto-${poll.id}`)?.value ?? null) : null;
   const today = formatLongDate(new Date().toISOString(), org);
 
   return (
-    <div className="container-page space-y-16 pt-6 md:space-y-20 md:pt-8">
+    <div className="container-page space-y-12 pt-6 md:space-y-14 md:pt-8">
       <h1 className="sr-only">{org.name}: portada</h1>
 
       {/* apertura: la historia principal grande y "Lo último" al lado */}
@@ -91,20 +87,6 @@ export default async function Home() {
           </aside>
         </div>
       </section>
-
-      {/* mosaico: una tarjeta alta y cuatro pequeñas */}
-      {mosaic.length >= 3 && (
-        <section aria-labelledby="h-destacadas">
-          <BlockHeading id="h-destacadas">Para leer hoy</BlockHeading>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {mosaic.map((a, n) => (
-              <div key={a.id} data-reveal style={i(n)} className={cx(n === 0 && "sm:col-span-2 lg:row-span-2")}>
-                <StoryCard article={a} org={org} variant={n === 0 ? "tile" : "standard"} />
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
 
       {/* opinión: banda oscura con las columnas y la encuesta */}
       {(opinion.length > 0 || poll) && (
@@ -164,7 +146,7 @@ export default async function Home() {
               <div className={cx("grid gap-6 sm:grid-cols-2", items.length === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4")}>
                 {items.map((a, n) => (
                   <div key={a.id} data-reveal style={i(n)}>
-                    <StoryCard article={a} org={org} variant="standard" withDek />
+                    <StoryCard article={a} org={org} variant="standard" />
                   </div>
                 ))}
               </div>
@@ -173,11 +155,6 @@ export default async function Home() {
         );
       })}
 
-      {sponsored.length > 0 && (
-        <section aria-label="Contenido patrocinado" data-reveal className="rounded-lg border border-dashed border-border-input/40 bg-surface p-6">
-          <StoryCard article={sponsored[0]!} org={org} variant="row" />
-        </section>
-      )}
     </div>
   );
 }

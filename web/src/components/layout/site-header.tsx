@@ -34,7 +34,7 @@ export async function SiteHeader({ org }: { org: Organization }) {
           {(!org.logo || org.theme.showName) && <span className="truncate font-display text-title-sm font-semibold tracking-tight sm:text-title">{org.name}</span>}
         </Link>
         <SectionNav sections={menu} />
-        <div className="ml-auto flex shrink-0 items-center gap-1 xl:ml-0">
+        <div className="ml-auto flex shrink-0 items-center gap-1 lg:ml-0">
           <Link href="/buscar" aria-label="Buscar" title="Buscar" className={iconButtonClass()}>
             <Search className="size-4.5" aria-hidden />
           </Link>

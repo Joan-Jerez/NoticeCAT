@@ -9,9 +9,9 @@
   --color-border-input: #8F7F6C;
   --color-text: #2B211A;
   --color-text-muted: #6B5D4F;
-  --color-accent: #A2441F;
-  --color-accent-hover: #853819;
-  --color-on-accent: #FFF9F3;
+  --color-accent: #5A3D82;
+  --color-accent-hover: #46306A;
+  --color-on-accent: #FFFFFF;
   --color-inverse: #2B211A;
   --color-inverse-surface: #3B2F26;
   --color-inverse-border: #4A3D32;
@@ -25,7 +25,7 @@
   --color-neutral-bg: #ECE5DA;
   --color-danger: #B0271F;
   --color-danger-bg: #F8E1DD;
-  --color-focus: #A2441F;
+  --color-focus: #5A3D82;
   --color-scrim: #2B211A;
 
   --font-display: var(--font-nf-display, Fraunces), Georgia, 'Times New Roman', serif;

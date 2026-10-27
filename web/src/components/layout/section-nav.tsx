@@ -47,7 +47,7 @@ export function StickyHeader({ children }: { children: React.ReactNode }) {
 
 // Píldora: fondo tenue al pasar; la sección actual va rellena de terracota.
 const navLink =
-  "group press inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-ui font-medium text-text " +
+  "group press inline-flex items-center gap-1 rounded-pill px-2 py-1.5 xl:gap-1.5 xl:px-3 text-ui font-medium text-text " +
   "hover:bg-surface-tint aria-expanded:bg-surface-tint aria-[current=page]:bg-accent aria-[current=page]:text-on-accent";
 
 // Escritorio: secciones en línea. Las que tienen subsecciones abren un panel
@@ -77,7 +77,7 @@ export function SectionNav({ sections }: { sections: Item[] }) {
   }, [open]);
 
   return (
-    <nav ref={nav} aria-label="Secciones" className="hidden min-w-0 flex-1 justify-center xl:flex">
+    <nav ref={nav} aria-label="Secciones" className="hidden min-w-0 flex-1 justify-center lg:flex">
       <ul className="flex items-center gap-0.5">
         <li>
           <Link href="/ultima-hora" aria-current={isCurrent("/ultima-hora") ? "page" : undefined} className={navLink}>
@@ -145,7 +145,7 @@ export function MobileMenu({ sections, orgName, signedIn, it = false }: { sectio
 
   return (
     <>
-      <button type="button" aria-label="Abrir menú" title="Abrir menú" onClick={() => dialog.current?.showModal()} className={iconButtonClass("xl:hidden")}>
+      <button type="button" aria-label="Abrir menú" title="Abrir menú" onClick={() => dialog.current?.showModal()} className={iconButtonClass("lg:hidden")}>
         <Menu className="size-4.5" aria-hidden />
       </button>
       <dialog ref={dialog} aria-label="Menú de secciones" className="enter-drawer m-0 h-dvh max-h-none w-[min(22rem,88vw)] max-w-none rounded-r-lg bg-bg p-0 text-text backdrop:bg-scrim/50">

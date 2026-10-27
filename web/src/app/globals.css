@@ -1,6 +1,19 @@
 @import "tailwindcss";
 @import "./tokens.css";
 
+:root {
+  --f-fraunces: "Fraunces Variable";
+  --f-literata: "Literata Variable";
+  --f-dmsans: "DM Sans Variable";
+  --f-playfair: "Playfair Display Variable";
+  --f-sourceserif: "Source Serif 4 Variable";
+  --f-inter: "Inter Variable";
+  --f-grotesk: "Space Grotesk Variable";
+  --f-dmserif: "DM Serif Display";
+  --f-merriweather: "Merriweather Variable";
+  --f-worksans: "Work Sans Variable";
+}
+
 @layer base {
   html {
     @apply bg-bg;
