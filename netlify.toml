@@ -2,7 +2,11 @@
 [build]
   base = "web"
   command = "npm run build"
-  publish = ".next"
 
 [build.environment]
   NODE_VERSION = "20"
+
+# Conecta las rutas de Next.js (servidor, middleware, imágenes) con Netlify.
+# Sin esto, Netlify solo sirve archivos estáticos y todo da 404.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
