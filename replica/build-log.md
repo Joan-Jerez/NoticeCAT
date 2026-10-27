@@ -46,3 +46,8 @@ Desarrollo: `?org=costa` cambia de medio, `?como=user-redactor` cambia de usuari
 - Auth real (S08/S09 + Mi cuenta), panel con sesión, seguir tema, votos con voter_hash, límites por IP.
 - **Más difícil de lo esperado:** probarlo. Supabase local necesita Docker y esta máquina tiene la virtualización desactivada; queda pendiente probar con el proyecto en la nube (`replica/backend.md`).
 - Pendiente: subir imágenes desde el editor, Stripe (milestone 5), SMTP propio + digest de temas, jobs.
+
+## Conexión a Supabase en la nube (2026-10-26)
+
+- Proyecto creado y enlazado; migración aplicada, seed cargado, 17/17 reglas de acceso en "ok", la app lee de Supabase.
+- Arreglo: con `SEED_PASSWORD=` vacío en `.env.local` los usuarios de prueba se creaban sin contraseña (`??` no cubre la cadena vacía). Ahora usa `||`.

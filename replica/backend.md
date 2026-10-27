@@ -6,7 +6,7 @@ Lee: `replica/architecture.md`. Fecha: 2026-10-25.
 
 | parte | estado | dónde |
 | --- | --- | --- |
-| Base de datos | migración lista; **sin aplicar** (falta el proyecto Supabase) | `web/supabase/migrations/20261025000000_init.sql` |
+| Base de datos | migración **aplicada** en el proyecto en la nube (2026-10-26) | `web/supabase/migrations/20261025000000_init.sql` |
 | Acceso (RLS) | políticas en las 17 tablas + bucket; script de prueba con 17 comprobaciones | migración, `web/scripts/test-rls.ts` |
 | Capa de datos | Supabase con las mismas firmas que la falsa; se elige por variables de entorno | `web/src/lib/data/{supabase,fake,index,shared}.ts` |
 | Auth | registro con verificación, entrar, recuperar, contraseña nueva, salir (y en todos los dispositivos), borrar cuenta, OAuth si está activo | `web/src/app/(public)/cuenta/`, `web/src/app/auth/callback/route.ts`, `web/src/lib/auth.ts` |
@@ -19,10 +19,11 @@ Lee: `replica/architecture.md`. Fecha: 2026-10-25.
 | Email | Supabase Auth manda confirmación y recuperación. Falta SMTP propio (Resend) y el digest de temas | — |
 | Jobs | **no empezados**: digest de temas (cada hora) y limpieza (diaria) | — |
 
-**Sin probar contra una base real.** Supabase local necesita Docker, y Docker
-no arranca en esta máquina: informa `hasNoVirtualization: true`, porque la
-virtualización está desactivada en la BIOS. El código compila, pasa lint y las 29
-pruebas e2e en modo JSON. La prueba con Supabase espera a que exista el proyecto.
+**Probado contra el proyecto en la nube (2026-10-26).** Migración aplicada con
+`supabase db push`, seed cargado (2 medios, 24 notas, 3 usuarios), las 17
+comprobaciones de `db:test-rls` en "ok", y la app en `npm run dev` lee de
+Supabase (`/admin` sin sesión redirige a entrar). Supabase local sigue sin
+poder usarse: Docker no arranca porque la virtualización está desactivada en la BIOS.
 
 ## Decisiones
 

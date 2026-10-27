@@ -19,7 +19,7 @@ if (!local && !process.argv.includes("--remoto")) {
   process.exit(1);
 }
 
-const password = process.env.SEED_PASSWORD ?? "NoticeCAT-dev-2026";
+const password = process.env.SEED_PASSWORD || "NoticeCAT-dev-2026";
 const db = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
 
 // ids del seed ("art-3", "sec-pais") -> uuid estable, para poder re-sembrar sin cambiar URLs
