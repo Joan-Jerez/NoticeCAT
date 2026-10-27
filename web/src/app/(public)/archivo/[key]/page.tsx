@@ -67,7 +67,7 @@ export default async function ArchivePage({ params }: Props) {
                 <ul className="mt-3 grid grid-cols-4 gap-2 text-ui-sm">
                   {days.map(([day, n]) => (
                     <li key={day}>
-                      <Link href={`/archivo/${day}`} className="block rounded-xs bg-surface px-2 py-1.5 text-center hover:bg-surface-tint">
+                      <Link href={`/archivo/${day}`} className="block rounded-sm bg-surface px-2 py-1.5 text-center hover:bg-surface-tint">
                         <span className="block font-semibold">{Number(day.slice(8))}</span>
                         <span className="block text-caption text-text-muted">{n} {n === 1 ? "nota" : "notas"}</span>
                       </Link>

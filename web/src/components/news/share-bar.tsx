@@ -33,7 +33,7 @@ export function ShareBar({ url, title, vertical = false }: { url: string; title:
   }
 
   return (
-    <div className={cx("flex items-center gap-1", vertical && "flex-col border-y border-border py-2")}>
+    <div className={cx("flex items-center gap-0.5", vertical ? "flex-col border-y border-border py-2" : "rounded-pill border border-border bg-raised p-1")}>
       {vertical && <span className="eyebrow pb-1 text-text-muted">Compartir</span>}
       {canShare && !vertical && (
         <button type="button" aria-label="Compartir" title="Compartir" className={iconButtonClass("md:hidden")} onClick={() => navigator.share({ title, url: abs() }).catch(() => {})}>
@@ -41,12 +41,12 @@ export function ShareBar({ url, title, vertical = false }: { url: string; title:
         </button>
       )}
       {networks.map(({ label, icon: Icon, href }) => (
-        <button key={label} type="button" aria-label={label} title={label} onClick={open(href)} className={iconButtonClass(cx(canShare && !vertical && "hidden md:grid", "transition-colors duration-base hover:text-accent"))}>
+        <button key={label} type="button" aria-label={label} title={label} onClick={open(href)} className={iconButtonClass(cx(canShare && !vertical && "hidden md:grid", "hover:text-accent"))}>
           <Icon className="size-4" aria-hidden />
         </button>
       ))}
       <button type="button" aria-label="Copiar enlace" title="Copiar enlace" onClick={copy} className={iconButtonClass()}>
-        {copied ? <Check className="size-4 text-success" aria-hidden /> : <LinkIcon className="size-4" aria-hidden />}
+        {copied ? <Check className="animate-pop size-4 text-success" aria-hidden /> : <LinkIcon className="size-4" aria-hidden />}
       </button>
       <span role="status" className="sr-only">
         {copied ? "Enlace copiado" : ""}

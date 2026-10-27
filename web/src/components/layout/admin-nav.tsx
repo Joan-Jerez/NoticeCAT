@@ -25,7 +25,7 @@ export function AdminNav() {
                 href={href}
                 target={external ? "_blank" : undefined}
                 aria-current={current ? "page" : undefined}
-                className={cx("flex min-h-11 items-center gap-3 whitespace-nowrap rounded-xs px-3 text-ui md:min-h-0 md:py-2.5", current ? "bg-inverse-surface text-on-inverse" : "text-on-inverse-muted hover:text-on-inverse")}
+                className={cx("flex min-h-11 items-center gap-3 whitespace-nowrap rounded-sm px-3 text-ui md:min-h-0 md:py-2.5", current ? "bg-inverse-surface text-on-inverse" : "text-on-inverse-muted hover:text-on-inverse")}
               >
                 <Icon className="size-4.5 shrink-0" aria-hidden />
                 {label}

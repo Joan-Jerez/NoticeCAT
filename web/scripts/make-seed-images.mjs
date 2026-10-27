@@ -9,13 +9,13 @@ const out = join(dirname(fileURLToPath(import.meta.url)), "..", "public", "seed"
 mkdirSync(out, { recursive: true });
 
 const palettes = [
-  ["#EFEAF7", "#6C4FA1", "#1E1728", "#A79EB5"],
-  ["#E2EFE6", "#33694A", "#1E1728", "#A7C4B0"],
-  ["#F6EBD4", "#7F5810", "#332A40", "#D9B97A"],
-  ["#F7F5FA", "#5A4089", "#6E6580", "#E4DEED"],
-  ["#1E1728", "#6C4FA1", "#FBF9FD", "#3E3549"],
-  ["#E8E4DC", "#6B6459", "#1E1728", "#B8B0A2"],
-];
+  ["#F1E1D2", "#A2441F", "#2B211A", "#D9A784"],
+  ["#E1EEE4", "#2F6846", "#2B211A", "#A9C7B1"],
+  ["#F5E8CF", "#7A5410", "#3B2F26", "#DDBB7C"],
+  ["#F3ECE1", "#853819", "#6B5D4F", "#E7DCCB"],
+  ["#2B211A", "#A2441F", "#FAF3EA", "#4A3D32"],
+  ["#ECE5DA", "#6A6055", "#2B211A", "#C2B3A2"],
+]
 
 // generador pseudoaleatorio con semilla: mismas imágenes en cada corrida
 function rng(seed) {

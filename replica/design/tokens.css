@@ -1,36 +1,36 @@
 /* Generado por build_tokens.py desde tokens.json. No editar a mano. */
 @theme static {
   --color-*: initial;
-  --color-bg: #FCFBFD;
-  --color-surface: #F7F5FA;
-  --color-surface-tint: #EFEAF7;
-  --color-raised: #FFFFFF;
-  --color-border: #E4DEED;
-  --color-border-input: #8E84A3;
-  --color-text: #1E1728;
-  --color-text-muted: #6E6580;
-  --color-accent: #6C4FA1;
-  --color-accent-hover: #5A4089;
-  --color-on-accent: #FBF9FD;
-  --color-inverse: #1E1728;
-  --color-inverse-surface: #332A40;
-  --color-inverse-border: #3E3549;
-  --color-on-inverse: #FBF9FD;
-  --color-on-inverse-muted: #A79EB5;
-  --color-success: #33694A;
-  --color-success-bg: #E2EFE6;
-  --color-warning: #7F5810;
-  --color-warning-bg: #F6EBD4;
-  --color-neutral: #6B6459;
-  --color-neutral-bg: #E8E4DC;
-  --color-danger: #B3261E;
-  --color-danger-bg: #F9E3E1;
-  --color-focus: #6C4FA1;
-  --color-scrim: #251D30;
+  --color-bg: #FAF6EF;
+  --color-surface: #F3ECE1;
+  --color-surface-tint: #F1E1D2;
+  --color-raised: #FFFDF9;
+  --color-border: #E7DCCB;
+  --color-border-input: #8F7F6C;
+  --color-text: #2B211A;
+  --color-text-muted: #6B5D4F;
+  --color-accent: #A2441F;
+  --color-accent-hover: #853819;
+  --color-on-accent: #FFF9F3;
+  --color-inverse: #2B211A;
+  --color-inverse-surface: #3B2F26;
+  --color-inverse-border: #4A3D32;
+  --color-on-inverse: #FAF3EA;
+  --color-on-inverse-muted: #C2B3A2;
+  --color-success: #2F6846;
+  --color-success-bg: #E1EEE4;
+  --color-warning: #7A5410;
+  --color-warning-bg: #F5E8CF;
+  --color-neutral: #6A6055;
+  --color-neutral-bg: #ECE5DA;
+  --color-danger: #B0271F;
+  --color-danger-bg: #F8E1DD;
+  --color-focus: #A2441F;
+  --color-scrim: #2B211A;
 
-  --font-display: var(--font-nf-display, 'Playfair Display'), Georgia, 'Times New Roman', serif;
-  --font-serif: var(--font-nf-serif, 'Source Serif 4'), Georgia, 'Times New Roman', serif;
-  --font-sans: var(--font-nf-sans, Inter), system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: var(--font-nf-display, Fraunces), Georgia, 'Times New Roman', serif;
+  --font-serif: var(--font-nf-serif, Literata), Georgia, 'Times New Roman', serif;
+  --font-sans: var(--font-nf-sans, 'DM Sans'), system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   --text-*: initial;
@@ -82,13 +82,16 @@
   --spacing: 0.25rem;
 
   --radius-*: initial;
-  --radius-xs: 2px;
-  --radius-sm: 4px;
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
   --radius-pill: 999px;
   --radius-full: 50%;
 
-  --shadow-card: none;
-  --shadow-pop: 0 18px 48px rgba(37, 29, 48, 0.25);
+  --shadow-card: 0 1px 2px rgba(43, 33, 26, 0.06), 0 8px 24px -12px rgba(43, 33, 26, 0.18);
+  --shadow-lift: 0 2px 4px rgba(43, 33, 26, 0.06), 0 18px 36px -14px rgba(43, 33, 26, 0.28);
+  --shadow-pop: 0 18px 48px rgba(43, 33, 26, 0.22);
 
   --duration-fast: 150ms;
   --duration-base: 250ms;

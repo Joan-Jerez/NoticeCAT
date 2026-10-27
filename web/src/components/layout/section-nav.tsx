@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Menu, Search, X } from "lucide-react";
+import { ArrowRight, ChevronDown, Menu, X } from "lucide-react";
 import { cx } from "@/lib/cx";
 import { iconButtonClass } from "@/components/ui/button";
 
@@ -14,14 +14,44 @@ function useCurrent() {
   return (href: string) => (href === "/" ? path === "/" : path === href || path.startsWith(href + "/"));
 }
 
-// Subrayado que se abre desde el centro; fijo en la sección actual.
-const navLink =
-  "relative inline-flex items-center gap-1 py-3 text-ui-sm font-semibold uppercase tracking-wide transition-colors duration-base " +
-  "after:absolute after:inset-x-0 after:bottom-1.5 after:h-px after:origin-center after:scale-x-0 after:bg-current after:transition-transform after:duration-slow after:ease-soft " +
-  "hover:text-accent hover:after:scale-x-100 aria-[current=page]:text-accent aria-[current=page]:after:scale-x-100 aria-expanded:text-accent";
+// Barra fija: al bajar se encoge un poco y gana sombra, sin cambiar de forma.
+export function StickyHeader({ children }: { children: React.ReactNode }) {
+  const [scrolled, setScrolled] = useState(false);
 
-// Escritorio: secciones centradas entre filetes. Las que tienen subsecciones
-// abren un panel con clic o teclado; Esc cierra y devuelve el foco al botón.
+  useEffect(() => {
+    let frame = 0;
+    const check = () => {
+      frame = 0;
+      setScrolled(window.scrollY > 8);
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(check);
+    };
+    check();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  return (
+    <header
+      data-scrolled={scrolled || undefined}
+      className="group/header sticky top-0 z-30 border-b border-transparent bg-bg/90 backdrop-blur-md transition-[border-color,box-shadow] duration-base ease-soft data-scrolled:border-border data-scrolled:shadow-card"
+    >
+      {children}
+    </header>
+  );
+}
+
+// Píldora: fondo tenue al pasar; la sección actual va rellena de terracota.
+const navLink =
+  "group press inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-ui font-medium text-text " +
+  "hover:bg-surface-tint aria-expanded:bg-surface-tint aria-[current=page]:bg-accent aria-[current=page]:text-on-accent";
+
+// Escritorio: secciones en línea. Las que tienen subsecciones abren un panel
+// con clic o teclado; Esc cierra y devuelve el foco al botón.
 export function SectionNav({ sections }: { sections: Item[] }) {
   const [open, setOpen] = useState<string | null>(null);
   const isCurrent = useCurrent();
@@ -47,10 +77,11 @@ export function SectionNav({ sections }: { sections: Item[] }) {
   }, [open]);
 
   return (
-    <nav ref={nav} aria-label="Secciones" className="relative border-y-4 border-double border-text">
-      <ul className="flex flex-wrap justify-center gap-x-7">
+    <nav ref={nav} aria-label="Secciones" className="hidden min-w-0 flex-1 justify-center xl:flex">
+      <ul className="flex items-center gap-0.5">
         <li>
           <Link href="/ultima-hora" aria-current={isCurrent("/ultima-hora") ? "page" : undefined} className={navLink}>
+            <span aria-hidden className="size-1.5 animate-pulse rounded-full bg-accent group-aria-[current=page]:bg-on-accent" />
             Última hora
           </Link>
         </li>
@@ -72,19 +103,20 @@ export function SectionNav({ sections }: { sections: Item[] }) {
                 <ChevronDown className={cx("size-3.5 transition-transform duration-base ease-soft", isOpen && "rotate-180")} aria-hidden />
               </button>
               {isOpen && (
-                <div id={`menu-${s.href.slice(1)}`} className="enter-fade absolute inset-x-0 top-full z-40 border-b border-border bg-raised shadow-pop">
-                  <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,3fr)] gap-10 px-10 py-7">
-                    <div className="border-r border-border pr-10">
+                <div id={`menu-${s.href.slice(1)}`} className="enter-fade absolute inset-x-4 top-full z-40 mt-2 overflow-hidden rounded-lg border border-border bg-raised shadow-pop md:inset-x-12">
+                  <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,3fr)]">
+                    <div className="bg-surface-tint px-8 py-7">
                       <p className="font-display text-heading">{s.name}</p>
-                      <Link href={s.href} className="mt-2 inline-block font-serif text-ui italic text-accent link-grow">
+                      <Link href={s.href} className="group mt-3 inline-flex items-center gap-1.5 text-ui font-semibold text-accent">
                         Ver toda la sección
+                        <ArrowRight className="size-4 transition-transform duration-base ease-soft group-hover:translate-x-1" aria-hidden />
                       </Link>
                     </div>
-                    <ul className="grid grid-cols-3 content-start gap-x-8 gap-y-1">
-                      {s.children.map((c) => (
-                        <li key={c.href}>
-                          <Link href={c.href} aria-current={isCurrent(c.href) ? "page" : undefined} className="block py-1.5 font-serif text-body-sm aria-[current=page]:text-accent">
-                            <span className="link-grow">{c.name}</span>
+                    <ul className="grid grid-cols-3 content-start gap-x-6 gap-y-1 px-8 py-7">
+                      {s.children.map((c, n) => (
+                        <li key={c.href} className="animate-fade-in" style={{ animationDelay: `${n * 30}ms` }}>
+                          <Link href={c.href} aria-current={isCurrent(c.href) ? "page" : undefined} className="block rounded-sm px-2 py-1.5 font-serif text-body-sm transition-colors duration-fast hover:bg-surface aria-[current=page]:text-accent">
+                            {c.name}
                           </Link>
                         </li>
                       ))}
@@ -100,61 +132,8 @@ export function SectionNav({ sections }: { sections: Item[] }) {
   );
 }
 
-// Escritorio: al bajar más allá de la cabecera, una barra compacta se desliza
-// desde arriba con el nombre del medio y las secciones.
-export function CompactBar({ sections, orgName }: { sections: Item[]; orgName: string }) {
-  const [shown, setShown] = useState(false);
-  const isCurrent = useCurrent();
-
-  useEffect(() => {
-    let frame = 0;
-    const check = () => {
-      frame = 0;
-      setShown(window.scrollY > 260);
-    };
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(check);
-    };
-    check();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(frame);
-    };
-  }, []);
-
-  return (
-    <div
-      inert={!shown}
-      aria-hidden={!shown || undefined}
-      className={cx(
-        "fixed inset-x-0 top-0 z-30 hidden border-b border-border bg-bg/95 backdrop-blur-sm transition-transform duration-base ease-soft md:block",
-        shown ? "translate-y-0" : "-translate-y-full",
-      )}
-    >
-      <div className="container-page flex h-12 items-center gap-8">
-        <Link href="/" className="shrink-0 font-display text-title">
-          {orgName}
-        </Link>
-        <ul className="flex min-w-0 flex-1 gap-6 overflow-hidden">
-          {sections.map((s) => (
-            <li key={s.href} className="shrink-0">
-              <Link href={s.href} aria-current={isCurrent(s.href) ? "page" : undefined} className={cx(navLink, "py-0 text-caption")}>
-                {s.name}
-              </Link>
-            </li>
-          ))}
-        </ul>
-        <Link href="/buscar" aria-label="Buscar" title="Buscar" className={iconButtonClass()}>
-          <Search className="size-4" aria-hidden />
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-// Móvil: cajón lateral con las secciones en acordeón.
-export function MobileMenu({ sections, orgName }: { sections: Item[]; orgName: string }) {
+// Móvil y pantallas medianas: cajón lateral con las secciones en acordeón.
+export function MobileMenu({ sections, orgName, signedIn }: { sections: Item[]; orgName: string; signedIn: boolean }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
   const isCurrent = useCurrent();
@@ -162,35 +141,37 @@ export function MobileMenu({ sections, orgName }: { sections: Item[]; orgName: s
 
   useEffect(() => dialog.current?.close(), [path]);
 
+  const rowLink = "block flex-1 rounded-sm px-2 py-3 font-display text-title-sm transition-colors duration-fast hover:text-accent aria-[current=page]:text-accent";
+
   return (
     <>
-      <button type="button" aria-label="Abrir menú" title="Abrir menú" onClick={() => dialog.current?.showModal()} className={iconButtonClass()}>
+      <button type="button" aria-label="Abrir menú" title="Abrir menú" onClick={() => dialog.current?.showModal()} className={iconButtonClass("xl:hidden")}>
         <Menu className="size-4.5" aria-hidden />
       </button>
-      <dialog ref={dialog} aria-label="Menú de secciones" className="enter-drawer m-0 h-dvh max-h-none w-[min(22rem,88vw)] max-w-none bg-bg p-0 text-text backdrop:bg-scrim/50">
-        <div className="flex h-14 items-center justify-between border-b-4 border-double border-text px-4">
-          <span className="font-display text-title">{orgName}</span>
+      <dialog ref={dialog} aria-label="Menú de secciones" className="enter-drawer m-0 h-dvh max-h-none w-[min(22rem,88vw)] max-w-none rounded-r-lg bg-bg p-0 text-text backdrop:bg-scrim/50">
+        <div className="flex h-16 items-center justify-between border-b border-border px-4">
+          <span className="font-display text-title font-semibold">{orgName}</span>
           <form method="dialog">
             <button aria-label="Cerrar menú" title="Cerrar menú" className={iconButtonClass()}>
               <X className="size-5" aria-hidden />
             </button>
           </form>
         </div>
-        <ul className="divide-y divide-border px-4">
+        <ul className="px-2 py-2">
           <li>
-            <Link href="/" className="block py-3 font-display text-title-sm">
+            <Link href="/" aria-current={isCurrent("/") ? "page" : undefined} className={rowLink}>
               Portada
             </Link>
           </li>
           <li>
-            <Link href="/ultima-hora" className="block py-3 font-display text-title-sm">
+            <Link href="/ultima-hora" aria-current={isCurrent("/ultima-hora") ? "page" : undefined} className={rowLink}>
               Última hora
             </Link>
           </li>
           {sections.map((s) => (
             <li key={s.href}>
               <div className="flex items-center justify-between">
-                <Link href={s.href} aria-current={isCurrent(s.href) ? "page" : undefined} className="block flex-1 py-3 font-display text-title-sm aria-[current=page]:text-accent">
+                <Link href={s.href} aria-current={isCurrent(s.href) ? "page" : undefined} className={rowLink}>
                   {s.name}
                 </Link>
                 {s.children.length > 0 && (
@@ -200,10 +181,10 @@ export function MobileMenu({ sections, orgName }: { sections: Item[]; orgName: s
                 )}
               </div>
               {expanded === s.href && (
-                <ul className="animate-fade-in pb-3 pl-4">
+                <ul className="animate-fade-in mb-2 ml-2 rounded-md bg-surface px-2 py-1">
                   {s.children.map((c) => (
                     <li key={c.href}>
-                      <Link href={c.href} className="block py-2 font-serif text-body-sm hover:text-accent">
+                      <Link href={c.href} className="block px-2 py-2 font-serif text-body-sm hover:text-accent">
                         {c.name}
                       </Link>
                     </li>
@@ -212,12 +193,12 @@ export function MobileMenu({ sections, orgName }: { sections: Item[]; orgName: s
               )}
             </li>
           ))}
-          <li>
-            <Link href="/cuenta/entrar" className="block py-3 text-ui font-semibold">
-              Entrar
-            </Link>
-          </li>
         </ul>
+        <div className="border-t border-border px-4 py-4">
+          <Link href={signedIn ? "/cuenta" : "/cuenta/entrar"} className="press flex h-11 items-center justify-center rounded-pill bg-accent text-ui font-semibold text-on-accent hover:bg-accent-hover">
+            {signedIn ? "Mi cuenta" : "Entrar"}
+          </Link>
+        </div>
       </dialog>
     </>
   );

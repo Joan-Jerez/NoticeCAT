@@ -13,20 +13,20 @@ import { NumberedList, StoryList } from "./story-card";
 // Cabecera de listados: centrada, con el tipo de página en cursiva y filete doble.
 export function PageHeader({ kind, title, description, aside, tabs }: { kind: string; title: string; description?: ReactNode; aside?: ReactNode; tabs?: { name: string; href: string; current?: boolean }[] }) {
   return (
-    <header className="animate-fade-in border-b-4 border-double border-text pb-6 text-center">
-      <p className="font-serif text-ui italic text-accent">{kind}</p>
-      <h1 className="mt-1 font-display text-heading-lg text-balance md:text-headline">{title}</h1>
-      {description && <div className="mx-auto mt-2 max-w-article font-serif text-body-sm text-text-muted">{description}</div>}
-      {aside && <div className="mt-4 flex justify-center">{aside}</div>}
+    <header className="animate-fade-in rounded-lg bg-surface px-6 py-8 md:px-10 md:py-10">
+      <p className="inline-flex rounded-pill bg-raised px-3 py-1 text-ui-sm font-semibold text-accent">{kind}</p>
+      <h1 className="mt-3 font-display text-heading-lg font-semibold text-balance md:text-headline">{title}</h1>
+      {description && <div className="mt-2 max-w-article font-serif text-body-sm text-text-muted">{description}</div>}
+      {aside && <div className="mt-4 flex">{aside}</div>}
       {tabs && tabs.length > 0 && (
         <nav aria-label={`Subsecciones de ${title}`} className="-mx-4 mt-5 overflow-x-auto px-4 md:mx-0 md:px-0">
-          <ul className="flex gap-x-6 whitespace-nowrap md:justify-center">
+          <ul className="flex gap-2 whitespace-nowrap">
             {tabs.map((t) => (
               <li key={t.href}>
                 <Link
                   href={t.href}
                   aria-current={t.current ? "page" : undefined}
-                  className="relative inline-block py-1 text-ui-sm font-semibold uppercase tracking-wide text-text-muted transition-colors duration-base after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-center after:scale-x-0 after:bg-current after:transition-transform after:duration-slow after:ease-soft hover:text-accent hover:after:scale-x-100 aria-[current=page]:text-accent aria-[current=page]:after:scale-x-100"
+                  className="press inline-block rounded-pill border border-border bg-raised px-3.5 py-1.5 text-ui-sm font-medium hover:border-accent hover:text-accent aria-[current=page]:border-accent aria-[current=page]:bg-accent aria-[current=page]:text-on-accent"
                 >
                   {t.name}
                 </Link>
@@ -62,14 +62,14 @@ export async function Listing({ org, page, filter, empty, withDek = false, showL
         )}
       </div>
       {showLatest && latest.length > 0 && (
-        <aside aria-labelledby="lo-ultimo" className="lg:border-l lg:border-border lg:pl-8">
-          <h2 id="lo-ultimo" className="mb-4 border-b border-text pb-2 font-display text-title">
-            Lo más reciente
+        <aside aria-labelledby="lo-ultimo" className="self-start rounded-lg bg-surface p-6 lg:sticky lg:top-20">
+          <h2 id="lo-ultimo" className="mb-3 font-display text-title font-semibold">
+            Lo último
           </h2>
           <NumberedList articles={latest.slice(0, 5)} org={org} />
-          <Link href="/ultima-hora" className="group mt-4 inline-flex items-center gap-1 font-serif text-ui italic text-accent">
-            <span className="link-grow">Toda la última hora</span>
-            <span aria-hidden className="transition-transform duration-base ease-soft group-hover:translate-x-1">→</span>
+          <Link href="/ultima-hora" className="group press mt-4 flex items-center justify-center gap-1.5 rounded-pill bg-raised px-4 py-2.5 text-ui-sm font-semibold hover:bg-accent hover:text-on-accent">
+            Toda la última hora
+            <span aria-hidden className="transition-transform duration-base ease-soft group-hover:translate-x-0.5">→</span>
           </Link>
         </aside>
       )}

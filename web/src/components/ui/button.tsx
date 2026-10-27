@@ -8,19 +8,19 @@ type Size = "sm" | "md" | "lg";
 
 const variants: Record<Variant, string> = {
   primary: "bg-accent text-on-accent hover:bg-accent-hover",
-  secondary: "border border-border bg-raised text-text hover:bg-surface",
+  secondary: "border border-border bg-raised text-text hover:border-text",
   ghost: "text-accent hover:bg-surface-tint",
   danger: "bg-danger text-raised hover:opacity-90",
 };
 const sizes: Record<Size, string> = {
-  sm: "h-8 px-3 text-ui-sm font-semibold",
-  md: "h-10 px-4 text-ui font-semibold",
-  lg: "h-12 px-5 text-ui font-semibold",
+  sm: "h-8 px-3.5 text-ui-sm font-semibold",
+  md: "h-10 px-5 text-ui font-semibold",
+  lg: "h-12 px-6 text-ui font-semibold",
 };
 
 export function buttonClass(variant: Variant = "primary", size: Size = "md", className?: string) {
   return cx(
-    "inline-flex shrink-0 items-center justify-center gap-2 rounded-xs transition-[color,background-color,border-color,transform] duration-base ease-soft active:translate-y-px",
+    "press inline-flex shrink-0 items-center justify-center gap-2 rounded-pill",
     "disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50",
     variants[variant],
     sizes[size],
@@ -44,7 +44,7 @@ export function ButtonLink({ variant, size, className, ...rest }: ComponentProps
 }
 
 export function iconButtonClass(className?: string) {
-  return cx("grid size-11 shrink-0 place-items-center rounded-xs text-text transition-colors duration-fast hover:bg-surface md:size-8", className);
+  return cx("press grid size-11 shrink-0 place-items-center rounded-full text-text hover:bg-surface-tint md:size-9", className);
 }
 
 export function IconButton({ label, className, children, ...rest }: ComponentProps<"button"> & { label: string }) {

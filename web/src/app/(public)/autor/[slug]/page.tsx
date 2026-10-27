@@ -22,9 +22,9 @@ export default async function AuthorPage({ params }: Props) {
 
   return (
     <div className="container-page pt-8 md:pt-12">
-      <header className="animate-fade-in flex flex-col items-center border-b-4 border-double border-text pb-6 text-center">
+      <header className="animate-fade-in flex flex-col items-center rounded-lg bg-surface px-6 py-10 text-center">
         <Avatar name={author.name} photo={author.photo} size={96} />
-        <p className="mt-4 font-serif text-ui italic text-accent">{author.isColumnist ? (author.columnName ?? "Columnista") : "Autor"}</p>
+        <p className="mt-4 inline-flex rounded-pill bg-raised px-3 py-1 text-ui-sm font-semibold text-accent">{author.isColumnist ? (author.columnName ?? "Columnista") : "Autor"}</p>
         <h1 className="mt-1 font-display text-heading-lg md:text-headline">{author.name}</h1>
         {author.bio && <p className="mt-2 max-w-article font-serif text-body-sm text-text-muted">{author.bio}</p>}
       </header>

@@ -11,7 +11,7 @@ export default function ImportPage() {
     <div className="mx-auto max-w-article">
       <Link href="/admin" className="text-ui-sm text-text-muted hover:underline">← Notas</Link>
       <h1 className="mt-2 font-display text-heading-lg">Importar archivo</h1>
-      <div className="mt-6 grid place-items-center rounded-xs border-2 border-dashed border-border-input bg-raised p-10 text-center">
+      <div className="mt-6 grid place-items-center rounded-sm border-2 border-dashed border-border-input bg-raised p-10 text-center">
         <FileUp className="size-8 text-text-muted" aria-hidden />
         <p className="mt-2 font-semibold">Importar desde Word, TXT o PDF</p>
         <p className="mt-1 max-w-card text-ui-sm text-text-muted">

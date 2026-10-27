@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import type { LucideIcon } from "lucide-react";
+import { ArrowRight, type LucideIcon } from "lucide-react";
 import { cx } from "@/lib/cx";
 import { formatShortDate, formatTime, initials, relativeOrDate } from "@/lib/format";
 import type { ArticleStatus, Image as Img, Organization } from "@/lib/types";
@@ -18,10 +18,10 @@ export function Eyebrow({ href, children, tone = "accent", className }: { href?:
   );
 }
 
-export function Timestamp({ iso, org, withDate = true, relative = false, className }: { iso: string; org: Organization; withDate?: boolean; relative?: boolean; className?: string }) {
+export function Timestamp({ iso, org, withDate = true, relative = false, inverse = false, className }: { iso: string; org: Organization; withDate?: boolean; relative?: boolean; inverse?: boolean; className?: string }) {
   const rel = relative ? relativeOrDate(iso, org) : null;
   return (
-    <time dateTime={iso} className={cx("text-caption text-text-muted", className)}>
+    <time dateTime={iso} className={cx("text-caption", inverse ? "text-on-inverse-muted" : "text-text-muted", className)}>
       {rel ?? (
         <>
           {withDate && <>{formatShortDate(iso, org)} · </>}
@@ -59,12 +59,12 @@ const status: Record<ArticleStatus, [string, string]> = {
 
 export function StatusChip({ value }: { value: ArticleStatus }) {
   const [label, cls] = status[value];
-  return <span className={cx("eyebrow inline-flex items-center gap-1.5 whitespace-nowrap rounded-xs px-2 py-1 before:size-1.5 before:rounded-full before:content-['']", cls)}>{label}</span>;
+  return <span className={cx("eyebrow inline-flex items-center gap-1.5 whitespace-nowrap rounded-pill px-2.5 py-1 before:size-1.5 before:rounded-full before:content-['']", cls)}>{label}</span>;
 }
 
 export function EmptyState({ icon: Icon, title, children, action }: { icon: LucideIcon; title: string; children?: ReactNode; action?: ReactNode }) {
   return (
-    <div className="rounded-xs border border-border bg-raised px-6 py-10 text-center">
+    <div className="rounded-lg border border-border bg-raised px-6 py-10 text-center">
       <Icon className="mx-auto size-8 text-text-muted" aria-hidden />
       <p className="mt-3 font-display text-title-sm">{title}</p>
       {children && <p className="mx-auto mt-1 max-w-card text-ui text-text-muted">{children}</p>}
@@ -73,17 +73,26 @@ export function EmptyState({ icon: Icon, title, children, action }: { icon: Luci
   );
 }
 
-// Encabezado de bloque: filete doble arriba, como una sección de periódico.
-export function BlockHeading({ id, children, href, linkLabel = "Ver todo", center = false }: { id?: string; children: ReactNode; href?: string; linkLabel?: string; center?: boolean }) {
+// Encabezado de bloque: título con un punto de color y, a la derecha, una
+// píldora "Ver todo" cuya flecha avanza al pasar.
+export function BlockHeading({ id, children, href, linkLabel = "Ver todo", tone = "default" }: { id?: string; children: ReactNode; href?: string; linkLabel?: string; tone?: "default" | "inverse" }) {
+  const inverse = tone === "inverse";
   return (
-    <div className={cx("mb-6 flex items-baseline gap-4 border-t-4 border-double border-text pt-3", center ? "flex-col items-center text-center" : "justify-between")}>
-      <h2 id={id} className="font-display text-heading">
+    <div className="mb-6 flex items-center justify-between gap-4">
+      <h2 id={id} className="flex items-center gap-3 font-display text-heading font-semibold">
+        <span aria-hidden className="size-2.5 shrink-0 rounded-full bg-accent" />
         {children}
       </h2>
       {href && (
-        <Link href={href} className="group inline-flex items-center gap-1 font-serif text-ui italic text-accent">
-          <span className="link-grow">{linkLabel}</span>
-          <span aria-hidden className="transition-transform duration-base ease-soft group-hover:translate-x-1">→</span>
+        <Link
+          href={href}
+          className={cx(
+            "group press inline-flex shrink-0 items-center gap-1.5 rounded-pill border px-3.5 py-1.5 text-ui-sm font-semibold",
+            inverse ? "border-inverse-border text-on-inverse hover:bg-on-inverse hover:text-inverse" : "border-border text-text hover:border-accent hover:bg-accent hover:text-on-accent",
+          )}
+        >
+          {linkLabel}
+          <ArrowRight className="size-3.5 transition-transform duration-base ease-soft group-hover:translate-x-0.5" aria-hidden />
         </Link>
       )}
     </div>
@@ -92,10 +101,10 @@ export function BlockHeading({ id, children, href, linkLabel = "Ver todo", cente
 
 export function Ornament({ className }: { className?: string }) {
   return (
-    <div aria-hidden className={cx("flex items-center justify-center gap-3 text-accent", className)}>
-      <span className="h-px w-12 bg-border" />
-      <span className="size-1.5 rotate-45 bg-current" />
-      <span className="h-px w-12 bg-border" />
+    <div aria-hidden className={cx("flex items-center justify-center gap-1.5", className)}>
+      <span className="size-1 rounded-full bg-accent/40" />
+      <span className="h-1 w-8 rounded-pill bg-accent" />
+      <span className="size-1 rounded-full bg-accent/40" />
     </div>
   );
 }

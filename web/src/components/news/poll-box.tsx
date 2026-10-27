@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
+import { Check } from "lucide-react";
 import { vote } from "@/app/(public)/actions";
 import type { Poll } from "@/lib/types";
 import { Button } from "@/components/ui/button";
@@ -34,7 +35,7 @@ export function PollBox({ poll, votedOptionId }: { poll: Poll; votedOptionId: st
   }
 
   return (
-    <section aria-labelledby="h-encuesta" className="self-start border border-border bg-raised p-5">
+    <section aria-labelledby="h-encuesta" className="self-start rounded-lg bg-raised p-6 shadow-card">
       <p className="eyebrow text-accent">Encuesta</p>
       {voted || closed ? (
         <>
@@ -45,14 +46,15 @@ export function PollBox({ poll, votedOptionId }: { poll: Poll; votedOptionId: st
               return (
                 <li key={o.id}>
                   <div className="flex justify-between text-ui-sm">
-                    <span className={o.id === voted ? "font-semibold" : undefined}>
+                    <span className={o.id === voted ? "inline-flex items-center gap-1.5 font-semibold" : undefined}>
+                      {o.id === voted && <Check className="animate-pop size-3.5 text-accent" aria-hidden />}
                       {o.label}
                       {o.id === voted && " · tu voto"}
                     </span>
-                    <span>{pct} %</span>
+                    <span className="tabular-nums">{pct} %</span>
                   </div>
-                  <div className="mt-1 h-2 bg-surface" aria-hidden>
-                    <div className="h-2 bg-accent transition-[width] duration-slow ease-soft" style={{ width: grown || closed ? `${pct}%` : "0%" }} />
+                  <div className="mt-1.5 h-2 overflow-hidden rounded-pill bg-surface" aria-hidden>
+                    <div className="h-2 rounded-pill bg-accent transition-[width] duration-slow ease-soft" style={{ width: grown || closed ? `${pct}%` : "0%" }} />
                   </div>
                 </li>
               );
@@ -66,7 +68,7 @@ export function PollBox({ poll, votedOptionId }: { poll: Poll; votedOptionId: st
             <legend id="h-encuesta" className="mt-1 font-display text-title-sm">{poll.question}</legend>
             <div className="mt-3 space-y-2">
               {options.map((o) => (
-                <label key={o.id} className="flex min-h-11 items-center gap-2 text-ui md:min-h-0">
+                <label key={o.id} className="flex min-h-11 cursor-pointer items-center gap-3 rounded-md border border-border px-3 text-ui transition-colors duration-fast hover:border-accent has-checked:border-accent has-checked:bg-surface-tint">
                   <input type="radio" name="opcion" value={o.id} checked={choice === o.id} onChange={() => setChoice(o.id)} className="size-4.5 accent-accent" />
                   {o.label}
                 </label>

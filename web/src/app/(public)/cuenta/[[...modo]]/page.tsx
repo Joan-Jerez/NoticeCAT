@@ -57,13 +57,13 @@ export default async function AccountPage({ params, searchParams }: Props) {
         {sp.seguir && <p className="mt-2 text-ui text-text-muted">Entra para seguir este tema y ver sus notas nuevas primero.</p>}
 
         {!usingSupabase && (
-          <div role="note" className="mt-6 flex gap-2 rounded-xs bg-warning-bg p-3 text-ui-sm text-warning">
+          <div role="note" className="mt-6 flex gap-2 rounded-sm bg-warning-bg p-3 text-ui-sm text-warning">
             <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
             Las cuentas se activan al conectar Supabase (claves en .env.local).
           </div>
         )}
         {sp.error && linkErrors[sp.error] && (
-          <p role="alert" className="mt-6 rounded-xs bg-danger-bg px-4 py-3 text-ui text-danger">
+          <p role="alert" className="mt-6 rounded-sm bg-danger-bg px-4 py-3 text-ui text-danger">
             {linkErrors[sp.error]}
           </p>
         )}
@@ -111,7 +111,7 @@ async function AccountHome({ orgId, orgName, user, passwordChanged }: { orgId: s
         <p className="eyebrow text-accent">{orgName}</p>
         <h1 className="mt-1 font-display text-heading">Mi cuenta</h1>
         {passwordChanged && (
-          <p role="status" className="mt-6 rounded-xs bg-success-bg px-4 py-3 text-ui text-success">
+          <p role="status" className="mt-6 rounded-sm bg-success-bg px-4 py-3 text-ui text-success">
             Tu contraseña se cambió.
           </p>
         )}

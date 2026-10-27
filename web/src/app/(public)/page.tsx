@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { Newspaper } from "lucide-react";
+import { ArrowRight, Newspaper } from "lucide-react";
 import { getActivePoll, getSectionTree, listArticles } from "@/lib/data";
 import { getCurrentOrg } from "@/lib/org";
+import { formatLongDate } from "@/lib/format";
 import { cx } from "@/lib/cx";
 import type { ArticleView } from "@/lib/types";
 import { BlockHeading, EmptyState } from "@/components/ui/misc";
@@ -34,8 +35,9 @@ export default async function Home() {
     return out;
   };
   const news = latest.filter((a) => !a.isSponsored && a.section.slug !== "opinion");
-  const recent = take(news, 5);
-  const briefs = take(news, 4);
+  const recent = take(news, 4);
+  // el mosaico necesita foto: una grande y cuatro pequeñas
+  const mosaic = take(news.filter((a) => a.cover), 5);
 
   const tree = await getSectionTree(org.id);
   const opinionSection = tree.find((s) => s.slug === "opinion");
@@ -54,49 +56,74 @@ export default async function Home() {
 
   const poll = await getActivePoll(org.id);
   const voted = poll ? ((await cookies()).get(`voto-${poll.id}`)?.value ?? null) : null;
+  const today = formatLongDate(new Date().toISOString(), org);
 
   return (
-    <div className="container-page space-y-16 pt-8 md:pt-10">
+    <div className="container-page space-y-16 pt-6 md:space-y-20 md:pt-8">
       <h1 className="sr-only">{org.name}: portada</h1>
 
-      {/* primera plana: breves | principal | lo más reciente, con filetes de columna */}
-      <section aria-label="Primera plana" className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_minmax(0,1fr)] lg:gap-0">
-        <div className="lg:order-2 lg:px-8" data-reveal>
-          <StoryCard article={lead} org={org} variant="lead" priority />
+      {/* apertura: la historia principal grande y "Lo último" al lado */}
+      <section aria-label="Apertura">
+        <p className="mb-4 flex items-center gap-2 text-ui-sm text-text-muted">
+          <span className="font-semibold text-text first-letter:uppercase">{today}</span>
+          <span aria-hidden className="hidden sm:inline">·</span>
+          <span className="hidden font-serif italic sm:inline">{org.tagline}</span>
+        </p>
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,8fr)_minmax(0,4fr)]">
+          <div data-reveal>
+            <StoryCard article={lead} org={org} variant="lead" priority />
+          </div>
+          <aside aria-labelledby="h-ultimo" data-reveal style={i(1)} className="flex flex-col rounded-lg bg-surface p-6">
+            <h2 id="h-ultimo" className="flex items-center gap-2 font-display text-title font-semibold">
+              <span aria-hidden className="relative flex size-2.5">
+                <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-60 motion-reduce:hidden" />
+                <span className="relative inline-flex size-2.5 rounded-full bg-accent" />
+              </span>
+              Lo último
+            </h2>
+            <div className="mt-4 flex-1">
+              <NumberedList articles={recent} org={org} />
+            </div>
+            <Link href="/ultima-hora" className="group press mt-4 inline-flex items-center justify-center gap-1.5 rounded-pill bg-raised px-4 py-2.5 text-ui-sm font-semibold hover:bg-accent hover:text-on-accent">
+              Toda la última hora
+              <ArrowRight className="size-3.5 transition-transform duration-base ease-soft group-hover:translate-x-0.5" aria-hidden />
+            </Link>
+          </aside>
         </div>
-        <aside aria-labelledby="h-breves" className="lg:order-1 lg:border-r lg:border-border lg:pr-8">
-          <h2 id="h-breves" className="mb-4 border-b border-text pb-2 font-display text-title">En breve</h2>
-          <ul className="divide-y divide-border">
-            {briefs.map((a, n) => (
-              <li key={a.id} data-reveal style={i(n)} className="py-4 first:pt-0 last:pb-0">
-                <StoryCard article={a} org={org} variant="compact" withDek />
-              </li>
-            ))}
-          </ul>
-        </aside>
-        <aside aria-labelledby="h-reciente" className="lg:order-3 lg:border-l lg:border-border lg:pl-8">
-          <h2 id="h-reciente" className="mb-4 border-b border-text pb-2 font-display text-title">Lo más reciente</h2>
-          <NumberedList articles={recent} org={org} />
-          <Link href="/ultima-hora" className="group mt-4 inline-flex items-center gap-1 font-serif text-ui italic text-accent">
-            <span className="link-grow">Toda la última hora</span>
-            <span aria-hidden className="transition-transform duration-base ease-soft group-hover:translate-x-1">→</span>
-          </Link>
-        </aside>
       </section>
 
-      {(opinion.length > 0 || poll) && (
-        <section aria-labelledby="h-opinion" data-reveal className="bg-surface-tint px-6 py-10 md:px-12">
-          <BlockHeading id="h-opinion" href="/opinion" linkLabel="Todas las columnas" center>
-            Opinión
-          </BlockHeading>
-          <div className={cx("grid gap-10 md:divide-x md:divide-border md:gap-0", poll ? "md:grid-cols-3" : "md:grid-cols-2")}>
-            {opinion.slice(0, poll ? 2 : 3).map((a, n) => (
-              <div key={a.id} data-reveal style={i(n)} className="md:px-8">
-                <StoryCard article={a} org={org} variant="opinion" />
+      {/* mosaico: una tarjeta alta y cuatro pequeñas */}
+      {mosaic.length >= 3 && (
+        <section aria-labelledby="h-destacadas">
+          <BlockHeading id="h-destacadas">Para leer hoy</BlockHeading>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {mosaic.map((a, n) => (
+              <div key={a.id} data-reveal style={i(n)} className={cx(n === 0 && "sm:col-span-2 lg:row-span-2")}>
+                <StoryCard article={a} org={org} variant={n === 0 ? "tile" : "standard"} />
               </div>
             ))}
+          </div>
+        </section>
+      )}
+
+      {/* opinión: banda oscura con las columnas y la encuesta */}
+      {(opinion.length > 0 || poll) && (
+        <section aria-labelledby="h-opinion" data-reveal className="rounded-lg bg-inverse px-6 py-10 text-on-inverse md:px-10 md:py-12">
+          <BlockHeading id="h-opinion" href="/opinion" linkLabel="Todas las columnas" tone="inverse">
+            Opinión
+          </BlockHeading>
+          <div className={cx("grid gap-10", poll && opinion.length > 0 && "lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]")}>
+            {opinion.length > 0 && (
+              <ul className="divide-y divide-inverse-border">
+                {opinion.map((a, n) => (
+                  <li key={a.id} data-reveal style={i(n)} className="py-6 first:pt-0 last:pb-0">
+                    <StoryCard article={a} org={org} variant="opinion" />
+                  </li>
+                ))}
+              </ul>
+            )}
             {poll && (
-              <div data-reveal style={i(2)} className="md:px-8">
+              <div data-reveal style={i(2)} className="text-text">
                 <PollBox poll={poll} votedOptionId={voted} />
               </div>
             )}
@@ -104,34 +131,50 @@ export default async function Home() {
         </section>
       )}
 
+      {/* secciones: se alternan una fila de cuatro y una ancha con dos */}
       {blocks.map(({ section, items }, b) => {
-        const [main, ...rest] = items;
-        const mirrored = b % 2 === 1;
-        // con pocas notas, dos columnas iguales para no dejar una foto enorme sola
-        const cols = rest.length < 2 ? "lg:grid-cols-2" : mirrored ? "lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]" : "lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]";
+        // con dos notas, dos tarjetas anchas; con más, se alterna fila de cuatro y una ancha con dos
+        const pair = items.length === 2;
+        const alt = !pair && b % 2 === 1;
         return (
           <section key={section.id} aria-labelledby={`h-${section.slug}`} data-reveal>
             <BlockHeading id={`h-${section.slug}`} href={`/${section.slug}`}>
               {section.name}
             </BlockHeading>
-            <div className={cx("grid gap-8 lg:gap-0", cols)}>
-              <div className={cx(mirrored ? "lg:order-2 lg:border-l lg:border-border lg:pl-8" : "lg:border-r lg:border-border lg:pr-8")}>
-                <StoryCard article={main!} org={org} variant="feature" />
-              </div>
-              <ul className={cx("divide-y divide-border", mirrored ? "lg:order-1 lg:pr-8" : "lg:pl-8")}>
-                {rest.map((a, n) => (
-                  <li key={a.id} data-reveal style={i(n + 1)} className="py-4 first:pt-0 last:pb-0">
-                    <StoryCard article={a} org={org} variant="compact" withDek />
-                  </li>
+            {pair ? (
+              <div className="grid gap-6 lg:grid-cols-2">
+                {items.map((a, n) => (
+                  <div key={a.id} data-reveal style={i(n)}>
+                    <StoryCard article={a} org={org} variant="wide" />
+                  </div>
                 ))}
-              </ul>
-            </div>
+              </div>
+            ) : alt ? (
+              <div className="grid gap-6 lg:grid-cols-4">
+                <div className="lg:col-span-2">
+                  <StoryCard article={items[0]!} org={org} variant="wide" />
+                </div>
+                {items.slice(1, 3).map((a, n) => (
+                  <div key={a.id} data-reveal style={i(n + 1)}>
+                    <StoryCard article={a} org={org} variant="standard" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className={cx("grid gap-6 sm:grid-cols-2", items.length === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4")}>
+                {items.map((a, n) => (
+                  <div key={a.id} data-reveal style={i(n)}>
+                    <StoryCard article={a} org={org} variant="standard" withDek />
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
         );
       })}
 
       {sponsored.length > 0 && (
-        <section aria-label="Contenido patrocinado" data-reveal className="border border-border bg-surface p-6">
+        <section aria-label="Contenido patrocinado" data-reveal className="rounded-lg border border-dashed border-border-input/40 bg-surface p-6">
           <StoryCard article={sponsored[0]!} org={org} variant="row" />
         </section>
       )}

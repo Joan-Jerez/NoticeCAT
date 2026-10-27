@@ -71,12 +71,12 @@ export function EditorForm({ initial, sections, authors, places, topics, covers,
 
       <div className="space-y-6">
         {state.error && (
-          <div ref={errorBox} tabIndex={-1} role="alert" className="rounded-xs bg-danger-bg px-4 py-3 text-ui text-danger">
+          <div ref={errorBox} tabIndex={-1} role="alert" className="rounded-sm bg-danger-bg px-4 py-3 text-ui text-danger">
             {state.error}
           </div>
         )}
         {(state.savedAt || justCreated) && !state.error && (
-          <p role="status" className="rounded-xs bg-success-bg px-4 py-3 text-ui text-success">
+          <p role="status" className="rounded-sm bg-success-bg px-4 py-3 text-ui text-success">
             {justCreated && !state.savedAt ? "Nota creada." : "Cambios guardados."}
           </p>
         )}
@@ -104,7 +104,7 @@ export function EditorForm({ initial, sections, authors, places, topics, covers,
       </div>
 
       <div className="space-y-6">
-        <section aria-label="Publicación" className="space-y-4 rounded-xs border border-border bg-raised p-5">
+        <section aria-label="Publicación" className="space-y-4 rounded-sm border border-border bg-raised p-5">
           <div className="flex items-center justify-between">
             <span className="text-ui-sm font-semibold">Estado</span>
             <StatusChip value={initial.status} />
@@ -149,7 +149,7 @@ export function EditorForm({ initial, sections, authors, places, topics, covers,
           )}
         </section>
 
-        <section aria-label="Clasificación" className="space-y-4 rounded-xs border border-border bg-raised p-5">
+        <section aria-label="Clasificación" className="space-y-4 rounded-sm border border-border bg-raised p-5">
           <Field id="sectionId" label="Sección" error={fe.sectionId}>
             <Select id="sectionId" name="sectionId" defaultValue={initial.sectionId} required aria-invalid={!!fe.sectionId || undefined}>
               <option value="">Elige una sección</option>
@@ -199,18 +199,18 @@ export function EditorForm({ initial, sections, authors, places, topics, covers,
           </div>
         </section>
 
-        <section aria-label="Foto de portada" className="space-y-3 rounded-xs border border-border bg-raised p-5">
+        <section aria-label="Foto de portada" className="space-y-3 rounded-sm border border-border bg-raised p-5">
           <p className="text-ui-sm font-semibold">Foto de portada</p>
           <input type="hidden" name="coverImageId" value={cover} />
           <div className="relative aspect-video overflow-hidden bg-surface-tint">
             {coverImg ? <Image src={coverImg.src} alt={coverImg.alt} fill sizes="20rem" className="object-cover" /> : <span className="grid h-full place-items-center text-caption text-text-muted">Sin foto</span>}
           </div>
           <div className="grid grid-cols-4 gap-2" role="radiogroup" aria-label="Elegir foto de la biblioteca">
-            <button type="button" role="radio" aria-checked={cover === ""} onClick={() => setCover("")} className={cx("aspect-video rounded-xs border text-caption", cover === "" ? "border-accent ring-2 ring-accent" : "border-border")}>
+            <button type="button" role="radio" aria-checked={cover === ""} onClick={() => setCover("")} className={cx("aspect-video rounded-sm border text-caption", cover === "" ? "border-accent ring-2 ring-accent" : "border-border")}>
               Ninguna
             </button>
             {covers.map((c, i) => (
-              <button key={c.id} type="button" role="radio" aria-checked={cover === c.id} aria-label={`Foto ${i + 1}`} onClick={() => setCover(c.id)} className={cx("relative aspect-video overflow-hidden rounded-xs border", cover === c.id ? "border-accent ring-2 ring-accent" : "border-border")}>
+              <button key={c.id} type="button" role="radio" aria-checked={cover === c.id} aria-label={`Foto ${i + 1}`} onClick={() => setCover(c.id)} className={cx("relative aspect-video overflow-hidden rounded-sm border", cover === c.id ? "border-accent ring-2 ring-accent" : "border-border")}>
                 <Image src={c.src} alt="" fill sizes="5rem" className="object-cover" />
               </button>
             ))}

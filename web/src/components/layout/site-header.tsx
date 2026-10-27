@@ -2,62 +2,44 @@ import Link from "next/link";
 import { Search, User } from "lucide-react";
 import { getSectionTree } from "@/lib/data";
 import { getSessionUser } from "@/lib/auth";
-import { formatLongDate } from "@/lib/format";
 import type { Organization } from "@/lib/types";
-import { iconButtonClass } from "@/components/ui/button";
-import { CompactBar, MobileMenu, SectionNav } from "./section-nav";
+import { buttonClass, iconButtonClass } from "@/components/ui/button";
+import { MobileMenu, SectionNav, StickyHeader } from "./section-nav";
 
-// Cabecera de periódico: utilidades arriba, el nombre del medio centrado
-// entre filetes dobles y las secciones en versalitas debajo.
+// Cabecera de revista: una sola barra fija con el nombre a la izquierda,
+// las secciones como píldoras y búsqueda y cuenta a la derecha.
 export async function SiteHeader({ org }: { org: Organization }) {
   const tree = (await getSectionTree(org.id)).filter((s) => s.inMenu);
   const menu = tree.map((s) => ({ name: s.name, href: `/${s.slug}`, children: s.children.filter((c) => c.inMenu).map((c) => ({ name: c.name, href: `/${s.slug}/${c.slug}` })) }));
-  const today = formatLongDate(new Date().toISOString(), org);
   const user = await getSessionUser();
 
   return (
-    <>
-      <header className="sticky top-0 z-30 bg-bg md:static">
-        <a href="#contenido" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-2 focus:z-50 focus:bg-raised focus:px-3 focus:py-2">
-          Saltar al contenido
-        </a>
-
-        {/* móvil: una sola fila */}
-        <div className="container-page flex h-14 items-center justify-between gap-2 border-b border-border md:hidden">
-          <MobileMenu sections={menu} orgName={org.name} />
-          <Link href="/" className="truncate font-display text-title">
-            {org.name}
-          </Link>
+    <StickyHeader>
+      <a href="#contenido" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-2 focus:z-50 focus:rounded-sm focus:bg-raised focus:px-3 focus:py-2">
+        Saltar al contenido
+      </a>
+      <div className="container-page relative flex h-16 items-center gap-3 transition-[height] duration-base ease-soft group-data-scrolled/header:h-14 md:gap-6">
+        <MobileMenu sections={menu} orgName={org.name} signedIn={!!user} />
+        <Link href="/" className="group flex min-w-0 items-center gap-2">
+          <span aria-hidden className="grid size-7 shrink-0 place-items-center rounded-md sm:size-8 bg-accent font-display text-title-sm font-semibold text-on-accent transition-transform duration-base ease-soft group-hover:-rotate-6">
+            {org.name.replace(/^(La|El|Los|Las|Diario)\s+/i, "").charAt(0)}
+          </span>
+          <span className="truncate font-display text-title-sm font-semibold tracking-tight sm:text-title">{org.name}</span>
+        </Link>
+        <SectionNav sections={menu} />
+        <div className="ml-auto flex shrink-0 items-center gap-1 xl:ml-0">
           <Link href="/buscar" aria-label="Buscar" title="Buscar" className={iconButtonClass()}>
             <Search className="size-4.5" aria-hidden />
           </Link>
-        </div>
-
-        {/* escritorio: cabecera completa */}
-        <div className="container-page hidden md:block">
-          <div className="flex h-10 items-center justify-between text-caption text-text-muted">
-            <span className="first-letter:uppercase">{today}</span>
-            <div className="flex items-center gap-4">
-              <Link href="/buscar" className="inline-flex items-center gap-1.5 hover:text-text">
-                <Search className="size-3.5" aria-hidden />
-                Buscar
-              </Link>
-              <Link href={user ? "/cuenta" : "/cuenta/entrar"} className="inline-flex items-center gap-1.5 hover:text-text">
-                <User className="size-3.5" aria-hidden />
-                {user ? "Mi cuenta" : "Entrar"}
-              </Link>
-            </div>
-          </div>
-          <div className="border-t border-text py-6 text-center">
-            <Link href="/" className="inline-block font-display text-hero tracking-tight">
-              {org.name}
+          {/* en móvil la cuenta está dentro del menú lateral */}
+          <div className="hidden md:block">
+            <Link href={user ? "/cuenta" : "/cuenta/entrar"} className={buttonClass("secondary", "sm")}>
+              <User className="size-3.5" aria-hidden />
+              {user ? "Mi cuenta" : "Entrar"}
             </Link>
-            <p className="mt-1 font-serif text-ui italic text-text-muted">{org.tagline}</p>
           </div>
-          <SectionNav sections={menu} />
         </div>
-      </header>
-      <CompactBar sections={menu} orgName={org.name} />
-    </>
+      </div>
+    </StickyHeader>
   );
 }

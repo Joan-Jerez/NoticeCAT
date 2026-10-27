@@ -3,7 +3,7 @@ import { CircleAlert } from "lucide-react";
 import { cx } from "@/lib/cx";
 
 const control =
-  "w-full rounded-xs border border-border-input bg-raised px-3 text-ui text-text placeholder:text-text-muted " +
+  "w-full rounded-sm border border-border-input bg-raised px-3 text-ui text-text placeholder:text-text-muted " +
   "focus:border-accent disabled:cursor-not-allowed disabled:border-border disabled:bg-surface disabled:text-text-muted " +
   "aria-invalid:border-danger";
 

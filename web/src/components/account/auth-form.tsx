@@ -30,7 +30,7 @@ export function AuthForm({ mode, button, next }: { mode: AuthMode; button: strin
 
   if (state.done) {
     return (
-      <div ref={box} tabIndex={-1} role="status" className="mt-6 rounded-xs bg-success-bg px-4 py-3 text-ui text-success">
+      <div ref={box} tabIndex={-1} role="status" className="mt-6 rounded-sm bg-success-bg px-4 py-3 text-ui text-success">
         {state.done}
       </div>
     );
@@ -39,7 +39,7 @@ export function AuthForm({ mode, button, next }: { mode: AuthMode; button: strin
   return (
     <form action={action} className="mt-6 space-y-4" noValidate>
       {state.error && (
-        <div ref={box} tabIndex={-1} role="alert" className="rounded-xs bg-danger-bg px-4 py-3 text-ui text-danger">
+        <div ref={box} tabIndex={-1} role="alert" className="rounded-sm bg-danger-bg px-4 py-3 text-ui text-danger">
           {state.error}
         </div>
       )}

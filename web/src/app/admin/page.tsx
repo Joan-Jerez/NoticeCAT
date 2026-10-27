@@ -39,21 +39,21 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
       </div>
 
       {sp.borrada && (
-        <p role="status" className="mt-4 rounded-xs bg-success-bg px-4 py-3 text-ui text-success">La nota se borró.</p>
+        <p role="status" className="mt-4 rounded-sm bg-success-bg px-4 py-3 text-ui text-success">La nota se borró.</p>
       )}
 
       <dl className="mt-6 grid gap-4 sm:grid-cols-3">
-        <div className="rounded-xs border border-border bg-raised p-5">
+        <div className="rounded-sm border border-border bg-raised p-5">
           <dt className="eyebrow text-text-muted">Publicadas hoy</dt>
           <dd className="font-display text-heading">{stats.publishedToday}</dd>
           <dd className="text-caption text-text-muted">{stats.total} publicadas en total</dd>
         </div>
-        <div className="rounded-xs border border-border bg-raised p-5">
+        <div className="rounded-sm border border-border bg-raised p-5">
           <dt className="eyebrow text-text-muted">Programadas</dt>
           <dd className="font-display text-heading">{stats.scheduled}</dd>
           <dd className="text-caption text-text-muted">{stats.nextScheduledAt ? `la próxima: ${when(stats.nextScheduledAt)}` : "ninguna pendiente"}</dd>
         </div>
-        <div className="rounded-xs border border-border bg-raised p-5">
+        <div className="rounded-sm border border-border bg-raised p-5">
           <dt className="eyebrow text-text-muted">Borradores</dt>
           <dd className="font-display text-heading">{stats.drafts}</dd>
           <dd className="text-caption text-text-muted">sin publicar</dd>
@@ -65,7 +65,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
           <ul className="flex flex-wrap gap-1">
             {tabs.map((t) => (
               <li key={t.label}>
-                <Link href={qs(t.value)} aria-current={estado === t.value ? "page" : undefined} className={cx("inline-block rounded-xs px-3 py-1.5 text-ui-sm font-semibold", estado === t.value ? "bg-inverse text-on-inverse" : "text-text-muted hover:bg-raised hover:text-text")}>
+                <Link href={qs(t.value)} aria-current={estado === t.value ? "page" : undefined} className={cx("inline-block rounded-sm px-3 py-1.5 text-ui-sm font-semibold", estado === t.value ? "bg-inverse text-on-inverse" : "text-text-muted hover:bg-raised hover:text-text")}>
                   {t.label}
                 </Link>
               </li>
@@ -86,7 +86,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
             {q ? "Prueba con otra palabra." : "Cuando crees o publiques notas, aparecerán en esta lista."}
           </EmptyState>
         ) : (
-          <div className="overflow-hidden rounded-xs border border-border bg-raised">
+          <div className="overflow-hidden rounded-sm border border-border bg-raised">
             <table className="w-full text-left text-ui">
               <caption className="sr-only">Notas del medio, de la más reciente a la más antigua</caption>
               <thead className="hidden border-b border-border md:table-header-group">

@@ -51,3 +51,12 @@ Desarrollo: `?org=costa` cambia de medio, `?como=user-redactor` cambia de usuari
 
 - Proyecto creado y enlazado; migración aplicada, seed cargado, 17/17 reglas de acceso en "ok", la app lee de Supabase.
 - Arreglo: con `SEED_PASSWORD=` vacío en `.env.local` los usuarios de prueba se creaban sin contraseña (`??` no cubre la cadena vacía). Ahora usa `||`.
+
+## Rediseño "revista cálida" (2026-10-26)
+
+- Para alejarse de Diario Libre: paleta crema y terracota (0 fallos de contraste AA), Fraunces + Literata + DM Sans, radios grandes y sombras suaves.
+- Cabecera de una barra fija con secciones en píldoras; portada con apertura grande y titular sobre la foto, "Lo último" en panel, mosaico "Para leer hoy", opinión y encuesta en banda oscura, secciones en tarjetas.
+- Artículo alineado a la izquierda, compartir en píldora bajo la firma (sin barra lateral), caja de autor con fondo.
+- Animaciones: fundido al cambiar de página (`(public)/template.tsx`), tarjetas que se elevan, botones que se hunden al pulsar, icono que salta al votar o copiar el enlace, punto "en vivo" en Lo último.
+- Ilustraciones de prueba regeneradas con la paleta nueva. Sin Python en la máquina: el generador de tokens se corrió con un port a Node (mismo resultado).
+- 29/29 e2e en modo local. Ojo: Playwright reutiliza un servidor ya encendido; para no escribir en Supabase, apagar `npm run dev` antes de `npm run test:e2e`.

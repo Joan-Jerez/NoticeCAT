@@ -74,6 +74,28 @@
   }
 }
 
+/* Tarjeta que se eleva apenas al pasar o al recibir el foco. */
+@utility card-lift {
+  transition:
+    transform var(--duration-base) var(--ease-soft),
+    box-shadow var(--duration-base) var(--ease-soft);
+  &:hover,
+  &:focus-within {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lift);
+  }
+}
+
+/* Botones que se hunden un poco al pulsarlos. */
+@utility press {
+  transition-property: color, background-color, border-color, transform, box-shadow;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-soft);
+  &:active:not(:disabled) {
+    transform: scale(0.96);
+  }
+}
+
 /* Aparición al entrar en pantalla. Solo se oculta si el observador de
    RevealObserver está activo (html.reveal-on); sin JS todo se ve. */
 .reveal-on [data-reveal] {
@@ -139,6 +161,31 @@
   animation: fade-in var(--duration-slow) var(--ease-soft) both;
 }
 
+/* Cambio de página: solo opacidad, para no crear un bloque contenedor que
+   descoloque la barra de lectura (position: fixed). */
+@keyframes page-in {
+  from {
+    opacity: 0;
+  }
+}
+@utility animate-page-in {
+  animation: page-in 420ms var(--ease-soft) both;
+}
+
+/* Confirmación pequeña: un icono que aparece con un leve salto. */
+@keyframes pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.12);
+  }
+}
+@utility animate-pop {
+  animation: pop var(--duration-base) var(--ease-soft) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -150,7 +197,9 @@
   .reveal-on [data-reveal] {
     transform: none;
   }
-  .media-zoom {
+  .media-zoom,
+  .card-lift,
+  .press {
     transform: none !important;
   }
 }

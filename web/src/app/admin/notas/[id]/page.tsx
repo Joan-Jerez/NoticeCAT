@@ -25,7 +25,7 @@ export default async function EditArticle({ params, searchParams }: { params: Pr
       <Link href="/admin" className="text-ui-sm text-text-muted hover:underline">← Notas</Link>
       <h1 className="mt-2 font-display text-heading-lg">Editar nota</h1>
       {readOnly ? (
-        <p className="mt-6 rounded-xs bg-warning-bg px-4 py-3 text-ui text-warning">Solo puedes editar las notas que escribiste tú.</p>
+        <p className="mt-6 rounded-sm bg-warning-bg px-4 py-3 text-ui text-warning">Solo puedes editar las notas que escribiste tú.</p>
       ) : (
         <div className="mt-6">
           <EditorForm
