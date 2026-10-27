@@ -61,7 +61,7 @@ export function buildSeed(now = new Date()): DB {
     locale: "es-DO",
     hosts: ["localhost:3000", "127.0.0.1:3000", "gaceta.noticecat.app"],
     social: { instagram: "https://instagram.com/", facebook: "https://facebook.com/", x: "https://x.com/", youtube: "https://youtube.com/" },
-    theme: { ...DEFAULT_THEME, accent: "#5A3D82", paper: "blanco", showName: false },
+    theme: { ...DEFAULT_THEME, accent: "#5A3D82", paper: "lila", showName: false },
     logo: { src: "/brand/catcoding.png", width: 710, height: 255 },
     contact: { about: "Periódico digital del valle. Contamos lo que pasa cerca, con calma y con datos.", email: "redaccion@gaceta.test", phone: "+1 809 555 0100", address: "Calle del Sol 12, La Vega" },
   };

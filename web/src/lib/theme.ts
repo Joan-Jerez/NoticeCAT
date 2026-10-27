@@ -3,7 +3,7 @@
 // componente cambia sin tocar su código. El color se corrige solo hasta que el
 // texto sobre él y él sobre el papel se lean (contraste AA, 4,5:1).
 
-export type Paper = "crema" | "blanco" | "piedra";
+export type Paper = "crema" | "blanco" | "piedra" | "lila";
 export type FontSet = "revista" | "clasico" | "moderno" | "editorial";
 export type Corners = "suaves" | "rectas";
 
@@ -15,7 +15,7 @@ export interface OrgTheme {
   showName: boolean; // con logo: mostrar también el nombre al lado
 }
 
-export const DEFAULT_THEME: OrgTheme = { accent: "#5A3D82", paper: "blanco", fonts: "revista", corners: "suaves", showName: true };
+export const DEFAULT_THEME: OrgTheme = { accent: "#5A3D82", paper: "lila", fonts: "revista", corners: "suaves", showName: true };
 
 export const PAPERS: Record<Paper, { label: string; c: Record<string, string> }> = {
   crema: {
@@ -29,6 +29,10 @@ export const PAPERS: Record<Paper, { label: string; c: Record<string, string> }>
   piedra: {
     label: "Piedra",
     c: { bg: "#F2F1EE", surface: "#E8E6E1", raised: "#FBFAF8", border: "#D9D6CF", "border-input": "#7F7A71", text: "#1F2124", "text-muted": "#55585E", inverse: "#1F2124", "inverse-surface": "#2C2F33", "inverse-border": "#3B3F44", "on-inverse": "#F5F5F3", "on-inverse-muted": "#B4B7BC", scrim: "#1F2124" },
+  },
+  lila: {
+    label: "Lila",
+    c: { bg: "#F6F1FB", surface: "#ECE3F6", raised: "#FDFBFF", border: "#DCCFEB", "border-input": "#8A78A2", text: "#241A33", "text-muted": "#5D5070", inverse: "#3B2A57", "inverse-surface": "#4A3669", "inverse-border": "#5B477B", "on-inverse": "#F8F3FE", "on-inverse-muted": "#CFC2E2", scrim: "#241A33" },
   },
 };
 

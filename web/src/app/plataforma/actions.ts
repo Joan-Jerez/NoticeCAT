@@ -370,7 +370,7 @@ export async function deleteOrg(_prev: PlatformResult | null, form: FormData): P
 // ------------------------------------------------------------------ apariencia
 
 const hex = z.string().regex(/^#[0-9a-fA-F]{6}$/, "Color no válido.");
-const themeSchema = z.object({ accent: hex, paper: z.enum(["crema", "blanco", "piedra"]), fonts: z.enum(["revista", "clasico", "moderno", "editorial"]), corners: z.enum(["suaves", "rectas"]), showName: z.boolean() });
+const themeSchema = z.object({ accent: hex, paper: z.enum(["crema", "blanco", "piedra", "lila"]), fonts: z.enum(["revista", "clasico", "moderno", "editorial"]), corners: z.enum(["suaves", "rectas"]), showName: z.boolean() });
 
 // settings es un jsonb con varias claves: se cambia solo la que toca
 async function mergeSettings(orgId: string, patch: Record<string, unknown>) {
