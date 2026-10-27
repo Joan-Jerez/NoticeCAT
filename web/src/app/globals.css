@@ -203,3 +203,55 @@
     transform: none !important;
   }
 }
+
+/* ------------------------------------------------------------------ editor visual
+   El contenido de Tiptap no lleva clases: se le da forma desde aquí, parecida
+   a como sale publicado (components/news/article-body.tsx). */
+@layer components {
+  .prose-nota > * + * {
+    margin-top: 1em;
+  }
+  .prose-nota h2 {
+    margin-top: 1.4em;
+    font-family: var(--font-display);
+    font-size: var(--text-title);
+    line-height: var(--text-title--line-height);
+    font-weight: 600;
+  }
+  .prose-nota h3 {
+    margin-top: 1.2em;
+    font-family: var(--font-display);
+    font-size: var(--text-title-sm);
+    line-height: var(--text-title-sm--line-height);
+    font-weight: 600;
+  }
+  .prose-nota ul {
+    list-style: disc;
+    padding-left: 1.4em;
+  }
+  .prose-nota li::marker {
+    color: var(--color-accent);
+  }
+  .prose-nota li > p {
+    margin: 0;
+  }
+  .prose-nota blockquote {
+    border-left: 3px solid var(--color-accent);
+    padding-left: 1em;
+    font-family: var(--font-display);
+    font-size: var(--text-title-sm);
+    font-style: italic;
+  }
+  .prose-nota a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .prose-nota p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    color: var(--color-text-muted);
+    pointer-events: none;
+  }
+}

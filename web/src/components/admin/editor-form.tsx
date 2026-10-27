@@ -11,7 +11,8 @@ import type { ArticleStatus, Image as Img } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { describedBy, Field, Input, Select, Textarea } from "@/components/ui/field";
 import { StatusChip } from "@/components/ui/misc";
-import { BodyEditor } from "./body-editor";
+import { PhotoUpload } from "./photo-upload";
+import { RichEditor } from "./rich-editor";
 
 export interface EditorInitial {
   id: string | null;
@@ -63,7 +64,10 @@ export function EditorForm({ initial, sections, authors, places, topics, covers,
     if (state.error) errorBox.current?.focus();
   }, [state]);
 
-  const coverImg = covers.find((c) => c.id === cover);
+  // la galería crece con lo que se sube durante la edición
+  const [gallery, setGallery] = useState(covers);
+  const addToGallery = (img: Img) => setGallery((g) => [img, ...g.filter((x) => x.id !== img.id)]);
+  const coverImg = gallery.find((c) => c.id === cover);
 
   return (
     <form action={action} className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]" noValidate>
@@ -90,17 +94,15 @@ export function EditorForm({ initial, sections, authors, places, topics, covers,
           <Textarea id="dek" name="dek" rows={2} maxLength={500} defaultValue={initial.dek} aria-invalid={!!fe.dek || undefined} aria-describedby={describedBy("dek", fe.dek, true)} className="font-serif text-body-sm" />
         </Field>
 
-        <Field
-          id="body"
-          label="Texto"
-          error={fe.body}
-          hint={
-            <>
-              Selecciona texto y usa los botones, o los atajos Ctrl+B, Ctrl+I y Ctrl+K. Para un párrafo nuevo, deja una línea en blanco (Enter dos veces).
-            </>
-          }
-        >
-          <BodyEditor defaultValue={initial.body} related={related.filter((r) => r.id !== initial.id)} invalid={!!fe.body} describedBy={describedBy("body", fe.body, true)} />
+        <Field id="body" label="Texto" error={fe.body} hint="Se ve tal como saldrá publicado. Puedes pegar textos de Word o Google Docs con su formato.">
+          <RichEditor
+            defaultValue={initial.body}
+            related={related.filter((r) => r.id !== initial.id)}
+            gallery={gallery}
+            onGalleryAdd={addToGallery}
+            invalid={!!fe.body}
+            describedBy={describedBy("body", fe.body, true)}
+          />
         </Field>
       </div>
 
@@ -203,20 +205,27 @@ export function EditorForm({ initial, sections, authors, places, topics, covers,
         <section aria-label="Foto de portada" className="space-y-3 rounded-sm border border-border bg-raised p-5">
           <p className="text-ui-sm font-semibold">Foto de portada</p>
           <input type="hidden" name="coverImageId" value={cover} />
-          <div className="relative aspect-video overflow-hidden bg-surface-tint">
+          <div className="relative aspect-video overflow-hidden rounded-sm bg-surface-tint">
             {coverImg ? <Image src={coverImg.src} alt={coverImg.alt} fill sizes="20rem" className="object-cover" /> : <span className="grid h-full place-items-center text-caption text-text-muted">Sin foto</span>}
           </div>
-          <div className="grid grid-cols-4 gap-2" role="radiogroup" aria-label="Elegir foto de la biblioteca">
+          {coverImg?.credit && <p className="text-caption text-text-muted">Foto: {coverImg.credit}</p>}
+          <div className="grid max-h-56 grid-cols-4 gap-2 overflow-y-auto" role="radiogroup" aria-label="Elegir foto de la galería">
             <button type="button" role="radio" aria-checked={cover === ""} onClick={() => setCover("")} className={cx("aspect-video rounded-sm border text-caption", cover === "" ? "border-accent ring-2 ring-accent" : "border-border")}>
               Ninguna
             </button>
-            {covers.map((c, i) => (
-              <button key={c.id} type="button" role="radio" aria-checked={cover === c.id} aria-label={`Foto ${i + 1}`} onClick={() => setCover(c.id)} className={cx("relative aspect-video overflow-hidden rounded-sm border", cover === c.id ? "border-accent ring-2 ring-accent" : "border-border")}>
+            {gallery.map((c, i) => (
+              <button key={c.id} type="button" role="radio" aria-checked={cover === c.id} aria-label={`Foto ${i + 1}: ${c.alt}`} title={c.alt} onClick={() => setCover(c.id)} className={cx("relative aspect-video overflow-hidden rounded-sm border", cover === c.id ? "border-accent ring-2 ring-accent" : "border-border")}>
                 <Image src={c.src} alt="" fill sizes="5rem" className="object-cover" />
               </button>
             ))}
           </div>
-          <p className="text-caption text-text-muted">Subir fotos propias llega con el almacenamiento (/replica-backend).</p>
+          <PhotoUpload
+            idPrefix="foto-portada"
+            onUploaded={(img) => {
+              addToGallery(img);
+              setCover(img.id);
+            }}
+          />
         </section>
       </div>
     </form>

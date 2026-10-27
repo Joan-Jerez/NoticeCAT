@@ -23,7 +23,16 @@ test("una editora publica una nota y el lector la ve", async ({ page }, info) =>
   await page.goto("/admin/notas/nueva");
   await page.getByLabel("Título", { exact: true }).fill(title);
   await page.getByLabel("Bajada").fill("Una bajada escrita en la prueba.");
-  await page.getByLabel("Texto").fill("Primer párrafo con **negrita**.\n\n## Un subtítulo\n\n- uno\n- dos");
+  // editor visual: se escribe con el teclado y los atajos de Markdown dan el formato
+  const texto = page.getByLabel("Texto");
+  await texto.click();
+  await texto.pressSequentially("Primer párrafo con **negrita** ");
+  await page.keyboard.press("Enter");
+  await texto.pressSequentially("## Un subtítulo");
+  await page.keyboard.press("Enter");
+  await texto.pressSequentially("- uno");
+  await page.keyboard.press("Enter");
+  await texto.pressSequentially("dos");
   await page.getByLabel("Sección").selectOption({ label: "— Vivienda" });
   await page.getByText("Vivienda", { exact: true }).last().click(); // tema
   await page.getByRole("button", { name: "Publicar ahora" }).click();

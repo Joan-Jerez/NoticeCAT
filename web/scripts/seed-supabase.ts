@@ -71,7 +71,7 @@ async function main() {
   await run(
     "medios",
     db.from("organizations").insert(
-      seed.organizations.map((o) => ({ id: uuid(o.id), name: o.name, slug: o.slug, tagline: o.tagline, timezone: o.timezone, locale: o.locale, settings: { social: o.social } })),
+      seed.organizations.map((o) => ({ id: uuid(o.id), name: o.name, slug: o.slug, tagline: o.tagline, timezone: o.timezone, locale: o.locale, settings: { social: o.social, theme: o.theme, contact: o.contact } })),
     ),
   );
   await run(

@@ -4,6 +4,8 @@ import type { NextConfig } from "next";
 const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL) : null;
 
 const nextConfig: NextConfig = {
+  // fotos y logos subidos desde los formularios: el bucket admite hasta 5 MB
+  experimental: { serverActions: { bodySizeLimit: "6mb" } },
   images: {
     // las ilustraciones de prueba son SVG propios; se sirven sin scripts
     dangerouslyAllowSVG: true,

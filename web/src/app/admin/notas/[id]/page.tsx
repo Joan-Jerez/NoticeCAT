@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { getArticleForEdit, getArticleViewForStaff } from "@/lib/data";
 import { utcToZonedLocal } from "@/lib/format";
 import { canPublish, getCurrentOrg, getCurrentStaff } from "@/lib/org";
-import { docToText } from "@/lib/richtext";
 import { EditorForm } from "@/components/admin/editor-form";
 import { loadEditorOptions } from "../editor-data";
 
@@ -37,7 +36,7 @@ export default async function EditArticle({ params, searchParams }: { params: Pr
               publishAtLocal: a.status === "scheduled" && a.publishedAt ? utcToZonedLocal(a.publishedAt, org.timezone) : "",
               title: a.title,
               dek: a.dek ?? "",
-              body: docToText(a.body),
+              body: JSON.stringify(a.body),
               sectionId: a.sectionId,
               authorId: a.authorId ?? "",
               placeTagId: a.placeTagId ?? "",

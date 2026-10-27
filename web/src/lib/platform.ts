@@ -2,7 +2,8 @@ import "server-only";
 import { cache } from "react";
 import { notFound } from "next/navigation";
 import { dateParts } from "./format";
-import type { Role } from "./types";
+import { normalizeTheme, type OrgTheme } from "./theme";
+import type { OrgContact, OrgSocial, Role } from "./types";
 import { serviceClient, sessionClient, supabaseEnabled } from "./supabase/server";
 
 // Panel de plataforma (IT): ve todos los medios y usuarios. Solo entran los
@@ -159,6 +160,10 @@ export type OrgDetail = {
   domains: { id: string; host: string; isPrimary: boolean }[];
   sections: { id: string; name: string; slug: string; parentId: string | null; position: number; inMenu: boolean; articles: number }[];
   team: { userId: string; email: string; role: Role }[];
+  theme: OrgTheme;
+  social: OrgSocial;
+  contact: OrgContact;
+  logo: { src: string; width: number; height: number } | null;
 };
 
 export async function getOrgDetail(id: string): Promise<OrgDetail | null> {
@@ -166,7 +171,7 @@ export async function getOrgDetail(id: string): Promise<OrgDetail | null> {
   if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
   const db = serviceClient();
   const [org, domains, billing, sections, articles, members, auth] = await Promise.all([
-    db.from("organizations").select("id, name, slug, tagline, timezone, locale").eq("id", id).maybeSingle(),
+    db.from("organizations").select("id, name, slug, tagline, timezone, locale, settings, logo:images!logo_image_id(storage_path, width, height)").eq("id", id).maybeSingle(),
     db.from("org_domains").select("id, host, is_primary").eq("org_id", id).order("host"),
     db.from("org_billing").select("plan, status").eq("org_id", id).maybeSingle(),
     db.from("sections").select("id, name, slug, parent_id, position, in_menu").eq("org_id", id).order("position"),
@@ -190,6 +195,15 @@ export async function getOrgDetail(id: string): Promise<OrgDetail | null> {
     billingStatus: billing.data?.status ?? "trialing",
     domains: domains.data!.map((d) => ({ id: d.id, host: d.host, isPrimary: d.is_primary })),
     sections: sections.data!.map((s) => ({ id: s.id, name: s.name, slug: s.slug, parentId: s.parent_id, position: s.position, inMenu: s.in_menu, articles: perSection.get(s.id) ?? 0 })),
+    theme: normalizeTheme((org.data.settings as { theme?: unknown } | null)?.theme),
+    social: (org.data.settings as { social?: OrgSocial } | null)?.social ?? {},
+    contact: (org.data.settings as { contact?: OrgContact } | null)?.contact ?? {},
+    logo: (() => {
+      const l = org.data.logo as unknown as { storage_path: string; width: number | null; height: number | null } | null;
+      if (!l) return null;
+      const src = l.storage_path.startsWith("/") ? l.storage_path : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/${l.storage_path}`;
+      return { src, width: l.width ?? 400, height: l.height ?? 100 };
+    })(),
     team: members.data!.map((m) => ({ userId: m.user_id, role: m.role as Role, email: auth.data.users.find((u) => u.id === m.user_id)?.email ?? "?" })),
   };
 }

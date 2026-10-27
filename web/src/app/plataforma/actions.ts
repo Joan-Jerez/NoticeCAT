@@ -367,6 +367,119 @@ export async function deleteOrg(_prev: PlatformResult | null, form: FormData): P
   redirect("/plataforma?borrado=1");
 }
 
+// ------------------------------------------------------------------ apariencia
+
+const hex = z.string().regex(/^#[0-9a-fA-F]{6}$/, "Color no válido.");
+const themeSchema = z.object({ accent: hex, paper: z.enum(["crema", "blanco", "piedra"]), fonts: z.enum(["revista", "clasico", "moderno", "editorial"]), corners: z.enum(["suaves", "rectas"]), showName: z.boolean() });
+
+// settings es un jsonb con varias claves: se cambia solo la que toca
+async function mergeSettings(orgId: string, patch: Record<string, unknown>) {
+  const db = serviceClient();
+  const { data, error } = await db.from("organizations").select("settings").eq("id", orgId).single();
+  if (error) return error;
+  const { error: e2 } = await db
+    .from("organizations")
+    .update({ settings: { ...((data.settings as object | null) ?? {}), ...patch }, updated_at: new Date().toISOString() })
+    .eq("id", orgId);
+  return e2;
+}
+
+export async function updateTheme(orgId: string, theme: unknown): Promise<PlatformResult> {
+  const me = await requirePlatformAdmin();
+  const parsed = z.object({ orgId: uuid, theme: themeSchema }).safeParse({ orgId, theme });
+  if (!parsed.success) return bad("Datos no válidos.");
+  const error = await mergeSettings(orgId, { theme: parsed.data.theme });
+  if (error) return bad(`No se pudo guardar: ${error.message}`);
+  const t = parsed.data.theme;
+  await audit({ actor: me, action: "platform.org.theme", orgId, targetType: "org", targetId: orgId, summary: `Cambió la apariencia de ${await orgNameOf(orgId)}: ${t.accent}, papel ${t.paper}, letras ${t.fonts}, esquinas ${t.corners}`, details: t });
+  revalidatePath("/", "layout");
+  return done("Apariencia guardada. Ya se ve en la web del medio.");
+}
+
+const url = z.union([z.literal(""), z.string().trim().url("Escribe la dirección completa, con https://").startsWith("https://", "Debe empezar por https://")]);
+
+export async function updateContact(_prev: PlatformResult | null, form: FormData): Promise<PlatformResult> {
+  const me = await requirePlatformAdmin();
+  const keys = ["instagram", "facebook", "x", "youtube", "tiktok", "whatsapp", "about", "email", "phone", "address"] as const;
+  const raw = Object.fromEntries(keys.map((k) => [k, String(form.get(k) ?? "").trim()]));
+  const parsed = z
+    .object({
+      orgId: uuid,
+      instagram: url,
+      facebook: url,
+      x: url,
+      youtube: url,
+      tiktok: url,
+      whatsapp: url,
+      about: z.string().max(400, "El texto del pie admite 400 caracteres."),
+      email: z.union([z.literal(""), z.string().email("Correo no válido.")]),
+      phone: z.string().max(40),
+      address: z.string().max(160),
+    })
+    .safeParse({ orgId: form.get("orgId"), ...raw });
+  if (!parsed.success) return bad(firstIssue(parsed.error));
+  const { orgId, about, email, phone, address, ...social } = parsed.data;
+  // las vacías no se guardan: así el pie no pinta iconos sin enlace
+  const clean = <T extends Record<string, string>>(o: T) => Object.fromEntries(Object.entries(o).filter(([, v]) => v));
+  const error = await mergeSettings(orgId, { social: clean(social), contact: clean({ about, email, phone, address }) });
+  if (error) return bad(`No se pudo guardar: ${error.message}`);
+  await audit({ actor: me, action: "platform.org.contact", orgId, targetType: "org", targetId: orgId, summary: `Cambió las redes y los datos de contacto de ${await orgNameOf(orgId)}` });
+  revalidatePath("/", "layout");
+  return done("Redes y contacto guardados.");
+}
+
+const LOGO_TYPES: Record<string, string> = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/avif": "avif" };
+
+// El logo va al bucket "media" en la carpeta del medio, con su fila en images.
+export async function uploadLogo(_prev: PlatformResult | null, form: FormData): Promise<PlatformResult> {
+  const me = await requirePlatformAdmin();
+  const orgId = String(form.get("orgId") ?? "");
+  const file = form.get("logo");
+  const width = Number(form.get("width"));
+  const height = Number(form.get("height"));
+  if (!uuid.safeParse(orgId).success) return bad("Datos no válidos.");
+  if (!(file instanceof File) || file.size === 0) return bad("Elige un archivo.");
+  const ext = LOGO_TYPES[file.type];
+  if (!ext) return bad("El logo tiene que ser PNG, JPG, WebP o AVIF. Si lo tienes en SVG, expórtalo a PNG.");
+  if (file.size > 2 * 1024 * 1024) return bad("El logo pesa más de 2 MB.");
+  if (!Number.isInteger(width) || !Number.isInteger(height) || width < 16 || height < 16 || width > 8000 || height > 8000) return bad("No se pudo leer el tamaño de la imagen.");
+
+  const db = serviceClient();
+  const path = `${orgId}/logo-${Date.now()}.${ext}`;
+  const up = await db.storage.from("media").upload(path, file, { contentType: file.type, upsert: false });
+  if (up.error) return bad(`No se pudo subir: ${up.error.message}`);
+  const { data: img, error } = await db.from("images").insert({ org_id: orgId, storage_path: path, alt: "Logo", width, height, uploaded_by: me.id }).select("id").single();
+  if (error) return bad(`No se pudo guardar: ${error.message}`);
+  const { data: prev } = await db.from("organizations").select("logo_image_id, logo:images!logo_image_id(storage_path)").eq("id", orgId).single();
+  const set = await db.from("organizations").update({ logo_image_id: img.id }).eq("id", orgId);
+  if (set.error) return bad(`No se pudo guardar: ${set.error.message}`);
+  // el logo anterior ya no se usa: fuera la fila y el archivo
+  const old = prev?.logo as unknown as { storage_path: string } | null;
+  if (prev?.logo_image_id) {
+    await db.from("images").delete().eq("id", prev.logo_image_id);
+    if (old && !old.storage_path.startsWith("/")) await db.storage.from("media").remove([old.storage_path]);
+  }
+  await audit({ actor: me, action: "platform.org.logo", orgId, targetType: "org", targetId: orgId, summary: `Subió un logo nuevo para ${await orgNameOf(orgId)}` });
+  revalidatePath("/", "layout");
+  return done("Logo subido.");
+}
+
+export async function removeLogo(orgId: string): Promise<PlatformResult> {
+  const me = await requirePlatformAdmin();
+  if (!uuid.safeParse(orgId).success) return bad("Datos no válidos.");
+  const db = serviceClient();
+  const { data: prev } = await db.from("organizations").select("logo_image_id, logo:images!logo_image_id(storage_path)").eq("id", orgId).single();
+  if (!prev?.logo_image_id) return done("No tenía logo.");
+  const { error } = await db.from("organizations").update({ logo_image_id: null }).eq("id", orgId);
+  if (error) return bad(`No se pudo quitar: ${error.message}`);
+  const old = prev.logo as unknown as { storage_path: string } | null;
+  await db.from("images").delete().eq("id", prev.logo_image_id);
+  if (old && !old.storage_path.startsWith("/")) await db.storage.from("media").remove([old.storage_path]);
+  await audit({ actor: me, action: "platform.org.logo_removed", orgId, targetType: "org", targetId: orgId, summary: `Quitó el logo de ${await orgNameOf(orgId)}` });
+  revalidatePath("/", "layout");
+  return done("Logo quitado: vuelve la inicial.");
+}
+
 // ------------------------------------------------------------------ contenido
 
 export async function setArticleStatus(id: string, status: "draft" | "archived"): Promise<PlatformResult> {

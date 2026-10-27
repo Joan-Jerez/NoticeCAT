@@ -3,10 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { ConflictError, deleteArticle, ForbiddenError, publishArticle, saveArticle, unpublishArticle } from "@/lib/data";
+import { ConflictError, createImage, deleteArticle, ForbiddenError, publishArticle, saveArticle, unpublishArticle } from "@/lib/data";
+import type { Image } from "@/lib/types";
 import { zonedLocalToUtc } from "@/lib/format";
 import { getCurrentOrg, getCurrentStaff } from "@/lib/org";
-import { textToDoc } from "@/lib/richtext";
+import { sanitizeDoc, textToDoc } from "@/lib/richtext";
 import { articleTitle, audit } from "@/lib/audit";
 
 export type EditorState = { error?: string; fieldErrors?: Record<string, string>; savedAt?: string; updatedAt?: string; id?: string };
@@ -16,7 +17,7 @@ const schema = z.object({
   expectedUpdatedAt: z.string().optional(),
   title: z.string().trim().min(1, "El título es obligatorio.").max(300, "Máximo 300 caracteres."),
   dek: z.string().trim().max(500, "Máximo 500 caracteres."),
-  body: z.string().max(200_000, "El texto es demasiado largo."),
+  body: z.string().max(1_000_000, "El texto es demasiado largo."),
   sectionId: z.string().min(1, "Elige una sección."),
   authorId: z.string(),
   placeTagId: z.string(),
@@ -27,6 +28,20 @@ const schema = z.object({
   intent: z.enum(["save", "publish", "schedule"]),
   publishAt: z.string(),
 });
+
+// El editor visual manda el documento en JSON; el texto con símbolos
+// (## , **…**) se sigue aceptando por si llega de otro sitio.
+function bodyDoc(body: string) {
+  if (body.trimStart().startsWith("{")) {
+    try {
+      const doc = sanitizeDoc(JSON.parse(body));
+      if (doc) return doc;
+    } catch {
+      // no era JSON: se trata como texto
+    }
+  }
+  return textToDoc(body);
+}
 
 export async function submitArticle(_prev: EditorState, form: FormData): Promise<EditorState> {
   const org = await getCurrentOrg();
@@ -73,7 +88,7 @@ export async function submitArticle(_prev: EditorState, form: FormData): Promise
       {
         title: v.title,
         dek: v.dek || null,
-        body: textToDoc(v.body),
+        body: bodyDoc(v.body),
         sectionId: v.sectionId,
         authorId: v.authorId || null,
         placeTagId: v.placeTagId || null,
@@ -130,4 +145,37 @@ export async function remove(id: string) {
   await audit({ action: "article.deleted", summary: `Borró «${title ?? id}»`, orgId: org.id, targetType: "article", targetId: id });
   revalidatePath("/", "layout");
   redirect("/admin?borrada=1");
+}
+
+export type UploadState = { ok: true; image: Image } | { ok: false; error: string };
+
+const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif"];
+
+// Foto nueva para la galería del medio (portada o dentro del texto).
+export async function uploadPhoto(form: FormData): Promise<UploadState> {
+  const org = await getCurrentOrg();
+  const staff = await getCurrentStaff();
+  if (!staff) return { ok: false, error: "Tu sesión expiró. Vuelve a entrar." };
+  const file = form.get("file");
+  const parsed = z
+    .object({
+      alt: z.string().trim().min(3, "Describe la foto en una frase: la leen quienes no pueden verla.").max(300),
+      caption: z.string().trim().max(300),
+      credit: z.string().trim().max(120),
+      width: z.coerce.number().int().min(50).max(12000),
+      height: z.coerce.number().int().min(50).max(12000),
+    })
+    .safeParse({ alt: form.get("alt") ?? "", caption: form.get("caption") ?? "", credit: form.get("credit") ?? "", width: form.get("width"), height: form.get("height") });
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0]!.message };
+  if (!(file instanceof File) || file.size === 0) return { ok: false, error: "Elige una foto." };
+  if (!PHOTO_TYPES.includes(file.type)) return { ok: false, error: "La foto tiene que ser JPG, PNG, WebP o AVIF." };
+  if (file.size > 5 * 1024 * 1024) return { ok: false, error: "La foto pesa más de 5 MB. Redúcela antes de subirla." };
+  try {
+    const image = await createImage(org.id, staff.user.id, { file, alt: parsed.data.alt, caption: parsed.data.caption || null, credit: parsed.data.credit || null, width: parsed.data.width, height: parsed.data.height });
+    await audit({ action: "image.uploaded", summary: `Subió una foto: «${parsed.data.alt}»`, orgId: org.id, targetType: "image", targetId: image.id });
+    return { ok: true, image };
+  } catch (e) {
+    if (e instanceof ForbiddenError) return { ok: false, error: e.message };
+    throw e;
+  }
 }

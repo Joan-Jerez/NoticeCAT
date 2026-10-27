@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Search, ShieldCheck, User } from "lucide-react";
 import { getSectionTree } from "@/lib/data";
@@ -21,11 +22,16 @@ export async function SiteHeader({ org }: { org: Organization }) {
       </a>
       <div className="container-page relative flex h-16 items-center gap-3 transition-[height] duration-base ease-soft group-data-scrolled/header:h-14 md:gap-6">
         <MobileMenu sections={menu} orgName={org.name} signedIn={!!user} it={!!it} />
-        <Link href="/" className="group flex min-w-0 items-center gap-2">
-          <span aria-hidden className="grid size-7 shrink-0 place-items-center rounded-md sm:size-8 bg-accent font-display text-title-sm font-semibold text-on-accent transition-transform duration-base ease-soft group-hover:-rotate-6">
-            {org.name.replace(/^(La|El|Los|Las|Diario)\s+/i, "").charAt(0)}
-          </span>
-          <span className="truncate font-display text-title-sm font-semibold tracking-tight sm:text-title">{org.name}</span>
+        <Link href="/" aria-label={org.logo && !org.theme.showName ? org.name : undefined} className="group flex min-w-0 items-center gap-2">
+          {org.logo ? (
+            // logo propio: alto fijo, ancho según su proporción
+            <Image src={org.logo.src} alt="" width={Math.round((org.logo.width / org.logo.height) * 36)} height={36} priority className="h-8 w-auto max-w-40 object-contain sm:h-9" />
+          ) : (
+            <span aria-hidden className="grid size-7 shrink-0 place-items-center rounded-md sm:size-8 bg-accent font-display text-title-sm font-semibold text-on-accent transition-transform duration-base ease-soft group-hover:-rotate-6">
+              {org.name.replace(/^(La|El|Los|Las|Diario)\s+/i, "").charAt(0)}
+            </span>
+          )}
+          {(!org.logo || org.theme.showName) && <span className="truncate font-display text-title-sm font-semibold tracking-tight sm:text-title">{org.name}</span>}
         </Link>
         <SectionNav sections={menu} />
         <div className="ml-auto flex shrink-0 items-center gap-1 xl:ml-0">

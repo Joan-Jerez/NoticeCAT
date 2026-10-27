@@ -5,7 +5,8 @@ import { headers } from "next/headers";
 import { publicClient, serviceClient, sessionClient } from "../supabase/server";
 import { dayKey, readingMinutes, slugify, zonedLocalToUtc } from "../format";
 import { docToPlain } from "../richtext";
-import { articlePath, ConflictError, decodeCursor, encodeCursor, ForbiddenError, type ArticleFilter, type ArticleInput, type AuthorView, type SectionNode } from "./shared";
+import { articlePath, ConflictError, decodeCursor, encodeCursor, ForbiddenError, type ArticleFilter, type ArticleInput, type AuthorView, type ImageUpload, type SectionNode } from "./shared";
+import { normalizeTheme } from "../theme";
 import type { Article, ArticleStatus, ArticleView, Image, Organization, Page, Poll, RichNode, Role, Section, StaffUser, Tag } from "../types";
 
 // Capa de datos con Supabase. Mismas firmas que fake.ts.
@@ -26,7 +27,7 @@ function fail(error: { message: string } | null, what: string) {
 // ------------------------------------------------------------------ mapeo de filas
 
 function toOrg(r: Row): Organization {
-  const settings = (r.settings ?? {}) as { social?: Organization["social"] };
+  const settings = (r.settings ?? {}) as { social?: Organization["social"]; theme?: unknown; contact?: Organization["contact"] };
   return {
     id: r.id,
     name: r.name,
@@ -36,6 +37,9 @@ function toOrg(r: Row): Organization {
     locale: r.locale,
     hosts: (r.org_domains ?? []).map((d: Row) => d.host),
     social: settings.social ?? {},
+    theme: normalizeTheme(settings.theme),
+    logo: r.logo ? { src: imageSrc(r.logo.storage_path), width: r.logo.width ?? 400, height: r.logo.height ?? 100 } : null,
+    contact: settings.contact ?? {},
   };
 }
 
@@ -130,7 +134,7 @@ async function toViews(orgId: string, rows: Row[]): Promise<ArticleView[]> {
 
 // ------------------------------------------------------------------ medios
 
-const ORG = "*, org_domains(host)";
+const ORG = "*, org_domains(host), logo:images!logo_image_id(storage_path, width, height)";
 
 const getOrgById = cache(async (id: string): Promise<Organization | null> => {
   const { data, error } = await publicClient().from("organizations").select(ORG).eq("id", id).maybeSingle();
@@ -377,7 +381,8 @@ export async function votePoll(orgId: string, pollId: string, optionId: string):
 
 export async function listImages(orgId: string): Promise<Image[]> {
   const db = await sessionClient();
-  const { data, error } = await db.from("images").select("*").eq("org_id", orgId).order("created_at", { ascending: false }).limit(60);
+  // los avatares de autores del seed no son fotos de galería
+  const { data, error } = await db.from("images").select("*").eq("org_id", orgId).not("storage_path", "like", "/seed/person-%").order("created_at", { ascending: false }).limit(60);
   fail(error, "imágenes");
   return (data ?? []).map((r) => toImage(r)!);
 }
@@ -576,4 +581,30 @@ export async function deleteArticle(orgId: string, userId: string, id: string): 
   if (!isUuid(id)) return;
   const { error } = await db.from("articles").delete().eq("id", id).eq("org_id", orgId);
   fail(error, "borrar");
+}
+
+// ------------------------------------------------------------------ fotos
+
+export async function getImageById(orgId: string, id: string): Promise<Image | null> {
+  if (!isUuid(id)) return null;
+  const { data, error } = await publicClient().from("images").select("*").eq("org_id", orgId).eq("id", id).maybeSingle();
+  fail(error, "foto");
+  return toImage(data);
+}
+
+// Sube al bucket "media" con la sesión del usuario: RLS solo deja escribir
+// en la carpeta del medio a su personal.
+export async function createImage(orgId: string, userId: string, up: ImageUpload): Promise<Image> {
+  const { db } = await staffDb(orgId, userId, ["owner", "admin", "editor", "writer"]);
+  const ext = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/avif": "avif" }[up.file.type] ?? "jpg";
+  const path = `${orgId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const { error: e1 } = await db.storage.from("media").upload(path, up.file, { contentType: up.file.type });
+  if (e1) throw new ForbiddenError(`No se pudo subir la foto: ${e1.message}`);
+  const { data, error } = await db
+    .from("images")
+    .insert({ org_id: orgId, storage_path: path, alt: up.alt, caption: up.caption, credit: up.credit, width: up.width, height: up.height, uploaded_by: userId })
+    .select("*")
+    .single();
+  fail(error, "guardar la foto");
+  return toImage(data)!;
 }

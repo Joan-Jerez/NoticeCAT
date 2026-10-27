@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getOrgDetail } from "@/lib/platform";
 import { BillingForm, DeleteOrgForm, DomainsEditor, EnterPanelButton, OrgDetailsForm, SectionsEditor } from "@/components/platform/org-forms";
 import { Panel } from "@/components/platform/shared";
+import { ContactForm, LogoForm, ThemeEditor } from "@/components/platform/appearance-forms";
 
 export const metadata: Metadata = { title: "Medio" };
 
@@ -15,7 +16,7 @@ export default async function OrgPage({ params, searchParams }: { params: Promis
   if (!org) notFound();
 
   return (
-    <div className="max-w-4xl space-y-6">
+    <div className="max-w-5xl space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <Link href="/plataforma" className="text-ui-sm text-text-muted hover:text-accent">
@@ -30,6 +31,15 @@ export default async function OrgPage({ params, searchParams }: { params: Promis
 
       <Panel title="Datos">
         <OrgDetailsForm org={org} />
+      </Panel>
+      <Panel title="Apariencia" description="Así se verá la web del medio. Cambia y mira la vista previa; nada se aplica hasta que guardes.">
+        <ThemeEditor org={org} />
+      </Panel>
+      <Panel title="Logo">
+        <LogoForm org={org} />
+      </Panel>
+      <Panel title="Redes y contacto" description="Aparecen en el pie de página. Deja vacío lo que el medio no use.">
+        <ContactForm org={org} />
       </Panel>
       <Panel title="Plan" description="Mientras no haya cobro con Stripe, el plan y su estado se fijan a mano aquí.">
         <BillingForm org={org} />

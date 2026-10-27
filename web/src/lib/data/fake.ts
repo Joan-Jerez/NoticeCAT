@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { readDB, writeDB } from "./store";
 import type { DB } from "./seed";
 import { dayKey, readingMinutes, slugify } from "../format";
-import { articlePath, ConflictError, decodeCursor, encodeCursor, ForbiddenError, type ArticleFilter, type ArticleInput, type AuthorView, type SectionNode } from "./shared";
+import { articlePath, ConflictError, decodeCursor, encodeCursor, ForbiddenError, type ArticleFilter, type ArticleInput, type AuthorView, type ImageUpload, type SectionNode } from "./shared";
 import { docToPlain } from "../richtext";
 import type { Article, ArticleStatus, ArticleView, Image, Organization, Page, Poll, Section, StaffUser, Tag } from "../types";
 
@@ -201,8 +201,18 @@ export async function votePoll(orgId: string, pollId: string, optionId: string):
 }
 
 export async function listImages(orgId: string): Promise<Image[]> {
-  return readDB().images.filter((i) => i.orgId === orgId && i.src.includes("cover"));
+  // las fotos de la galería; los avatares de autores no cuentan
+  return readDB().images.filter((i) => i.orgId === orgId && !i.src.includes("person"));
 }
+
+export async function getImageById(orgId: string, id: string): Promise<Image | null> {
+  return readDB().images.find((i) => i.orgId === orgId && i.id === id) ?? null;
+}
+
+// Sin Supabase no hay dónde guardar archivos.
+export const createImage: (orgId: string, userId: string, up: ImageUpload) => Promise<Image> = async () => {
+  throw new ForbiddenError("Subir fotos necesita Supabase (ver replica/backend.md).");
+};
 
 // ------------------------------------------------------------------ panel
 

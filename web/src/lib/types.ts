@@ -1,4 +1,5 @@
 // Tipos de dominio. Reflejan replica/schema.sql (camelCase en vez de snake_case).
+import type { OrgTheme } from "./theme";
 
 export type Role = "owner" | "admin" | "editor" | "writer";
 export type ArticleStatus = "draft" | "scheduled" | "published" | "archived";
@@ -12,8 +13,15 @@ export interface Organization {
   timezone: string;
   locale: string;
   hosts: string[];
-  social: { instagram?: string; facebook?: string; x?: string };
+  social: OrgSocial;
+  theme: OrgTheme;
+  logo: { src: string; width: number; height: number } | null;
+  contact: OrgContact;
 }
+
+export type OrgSocial = { instagram?: string; facebook?: string; x?: string; youtube?: string; tiktok?: string; whatsapp?: string };
+// datos del pie de página: todo opcional
+export type OrgContact = { about?: string; email?: string; phone?: string; address?: string };
 
 export interface Section {
   id: string;
@@ -66,6 +74,7 @@ export type RichNode =
   | { type: "listItem"; content: RichNode[] }
   | { type: "blockquote"; content: RichNode[] }
   | { type: "relatedArticle"; attrs: { articleId: string } }
+  | { type: "image"; attrs: { imageId: string } }
   | { type: "text"; text: string; marks?: RichMark[] };
 
 export interface Article {

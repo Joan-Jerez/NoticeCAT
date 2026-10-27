@@ -30,6 +30,8 @@ export const {
   getActivePoll,
   votePoll,
   listImages,
+  getImageById,
+  createImage,
   getStaffUser,
   listAdminArticles,
   getAdminStats,
@@ -40,4 +42,4 @@ export const {
   deleteArticle,
 } = impl;
 
-export { articlePath, ConflictError, ForbiddenError, type ArticleFilter, type ArticleInput, type AuthorView, type SectionNode } from "./shared";
+export { articlePath, ConflictError, ForbiddenError, type ArticleFilter, type ArticleInput, type AuthorView, type ImageUpload, type SectionNode } from "./shared";

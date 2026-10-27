@@ -1,4 +1,5 @@
-// Genera ilustraciones abstractas propias para los datos de prueba (public/seed/*.svg).
+// Genera los avatares abstractos de los autores de prueba (public/seed/person-*.svg).
+// Las portadas son fotos de Wikimedia Commons: public/seed/photo-*.jpg, créditos en src/lib/data/seed-photos.json.
 // No son fotos de nadie: formas geométricas con la paleta de NoticeCAT.
 //   node scripts/make-seed-images.mjs
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -43,9 +44,6 @@ function svg(i, w, h) {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}"><rect width="${w}" height="${h}" fill="${bg}"/>${shapes.join("")}</svg>\n`;
 }
 
-for (let i = 1; i <= 16; i++) {
-  writeFileSync(join(out, `cover-${String(i).padStart(2, "0")}.svg`), svg(i, 1200, 675));
-}
 for (let i = 1; i <= 8; i++) {
   writeFileSync(join(out, `person-${String(i).padStart(2, "0")}.svg`), svg(100 + i, 240, 240));
 }

@@ -3,6 +3,8 @@
 import { textToDoc, docToPlain } from "../richtext";
 import { readingMinutes, slugify } from "../format";
 import type { Article, Author, Image, Organization, Poll, Section, StaffUser, Tag } from "../types";
+import photos from "./seed-photos.json";
+import { DEFAULT_THEME } from "../theme";
 
 export interface DB {
   version: number;
@@ -58,7 +60,10 @@ export function buildSeed(now = new Date()): DB {
     timezone: "America/Santo_Domingo",
     locale: "es-DO",
     hosts: ["localhost:3000", "127.0.0.1:3000", "gaceta.noticecat.app"],
-    social: { instagram: "https://instagram.com/", facebook: "https://facebook.com/", x: "https://x.com/" },
+    social: { instagram: "https://instagram.com/", facebook: "https://facebook.com/", x: "https://x.com/", youtube: "https://youtube.com/" },
+    theme: DEFAULT_THEME,
+    logo: null,
+    contact: { about: "Periódico digital del valle. Contamos lo que pasa cerca, con calma y con datos.", email: "redaccion@gaceta.test", phone: "+1 809 555 0100", address: "Calle del Sol 12, La Vega" },
   };
   db.organizations.push(gaceta);
   db.counters[gaceta.id] = 1001;
@@ -100,17 +105,11 @@ export function buildSeed(now = new Date()): DB {
   });
   const sectionId = (path: string) => `sec-${path.replace("/", "-")}`;
 
-  for (let i = 1; i <= 16; i++) {
-    db.images.push({
-      id: `img-cover-${i}`,
-      orgId: gaceta.id,
-      src: `/seed/cover-${String(i).padStart(2, "0")}.svg`,
-      alt: "Ilustración abstracta de formas geométricas",
-      caption: "Ilustración de archivo.",
-      credit: "Archivo NoticeCAT",
-      width: 1200,
-      height: 675,
-    });
+  // Fotos reales de Wikimedia Commons con licencia libre (CC0, CC BY, CC BY-SA);
+  // autor y licencia van en el crédito. Las 17 y 18 son del segundo medio.
+  for (const ph of photos) {
+    if (ph.n === 17 || ph.n === 18) continue;
+    db.images.push({ id: `img-cover-${ph.n}`, orgId: gaceta.id, src: `/seed/${ph.file}`, alt: ph.alt, caption: ph.caption, credit: ph.credit, width: ph.width, height: ph.height });
   }
   for (let i = 1; i <= 8; i++) {
     db.images.push({
@@ -460,7 +459,7 @@ El equipo viajará al campeonato del Caribe en marzo.`,
       author: "Andrés Peralta",
       tags: ["Educación"],
       hoursAgo: -6, // programada: sale sola dentro de 6 horas
-      cover: 2,
+      cover: 19,
       status: "scheduled",
       body: `Nota programada para dentro de seis horas.`,
     },
@@ -471,6 +470,7 @@ El equipo viajará al campeonato del Caribe en marzo.`,
       author: "Carmen Ruiz Tavárez",
       tags: [],
       hoursAgo: 1,
+      cover: 20,
       status: "draft",
       body: `Pendiente de transcribir.`,
     },
@@ -527,6 +527,10 @@ El equipo viajará al campeonato del Caribe en marzo.`,
     locale: "es-DO",
     hosts: ["costa.localhost:3000", "costa.noticecat.app"],
     social: {},
+    // otro aspecto para ver que cada medio tiene el suyo
+    theme: { accent: "#0E7490", paper: "blanco", fonts: "moderno", corners: "rectas", showName: true },
+    logo: null,
+    contact: { email: "hola@costa.test" },
   };
   db.organizations.push(costa);
   db.counters[costa.id] = 1;
@@ -535,9 +539,11 @@ El equipo viajará al campeonato del Caribe en marzo.`,
     { id: "costa-sec-playas", orgId: costa.id, parentId: null, name: "Playas", slug: "playas", position: 1, inMenu: true, rssEnabled: true },
   );
   db.authors.push({ id: "costa-aut-1", orgId: costa.id, name: "Redacción Costa", slug: "redaccion", bio: null, photoImageId: null, isColumnist: false, columnName: null });
-  for (const [title, sec, h] of [
-    ["El malecón estrena iluminación nueva", "costa-sec-local", 2],
-    ["Bandera verde en todas las playas este fin de semana", "costa-sec-playas", 5],
+  for (const ph of photos.filter((p) => p.n === 17 || p.n === 18))
+    db.images.push({ id: `img-cover-${ph.n}`, orgId: costa.id, src: `/seed/${ph.file}`, alt: ph.alt, caption: ph.caption, credit: ph.credit, width: ph.width, height: ph.height });
+  for (const [title, sec, h, cover] of [
+    ["El malecón estrena iluminación nueva", "costa-sec-local", 2, 17],
+    ["Bandera verde en todas las playas este fin de semana", "costa-sec-playas", 5, 18],
   ] as const) {
     const doc = textToDoc("Nota de prueba del segundo medio. No debe aparecer en La Gaceta del Valle.");
     db.articles.push({
@@ -553,7 +559,7 @@ El equipo viajará al campeonato del Caribe en marzo.`,
       sectionId: sec,
       authorId: "costa-aut-1",
       placeTagId: null,
-      coverImageId: null,
+      coverImageId: `img-cover-${cover}`,
       tagIds: [],
       status: "published",
       publishedAt: at(h),

@@ -47,3 +47,6 @@ export function decodeCursor(cursor: string | null | undefined): { publishedAt: 
   if (!publishedAt || !Number.isFinite(Number(number)) || Number.isNaN(Date.parse(publishedAt))) return null;
   return { publishedAt, number: Number(number) };
 }
+
+// Foto subida desde el panel (el tamaño lo mide el navegador).
+export type ImageUpload = { file: File; alt: string; caption: string | null; credit: string | null; width: number; height: number };

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { getVisibleArticleById } from "@/lib/data";
+import { getImageById, getVisibleArticleById } from "@/lib/data";
+import { Figure } from "./figure";
 import { safeHref } from "@/lib/richtext";
 import type { RichNode } from "@/lib/types";
 
@@ -42,6 +43,16 @@ async function Related({ orgId, articleId }: { orgId: string; articleId: string 
   );
 }
 
+async function BodyImage({ orgId, imageId }: { orgId: string; imageId: string }) {
+  const image = await getImageById(orgId, imageId);
+  if (!image) return null; // foto borrada de la galería: el hueco desaparece
+  return (
+    <div className="my-2">
+      <Figure image={image} />
+    </div>
+  );
+}
+
 function Block({ node, orgId, first }: { node: RichNode; orgId: string; first: boolean }) {
   switch (node.type) {
     case "paragraph":
@@ -76,6 +87,8 @@ function Block({ node, orgId, first }: { node: RichNode; orgId: string; first: b
       );
     case "relatedArticle":
       return <Related orgId={orgId} articleId={node.attrs.articleId} />;
+    case "image":
+      return <BodyImage orgId={orgId} imageId={node.attrs.imageId} />;
     default:
       return null;
   }
