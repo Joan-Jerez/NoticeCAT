@@ -11,7 +11,7 @@ const pages = {
     body: (org: string) => [
       `${org} es responsable de los contenidos publicados en este sitio.`,
       "Puedes compartir enlaces a nuestras notas libremente. Para reproducir textos, fotos o videos completos, escríbenos antes.",
-      "Este texto es una plantilla de NoticeCAT. El medio debe sustituirlo por su aviso legal revisado por un abogado.",
+      "Este texto es una plantilla de CatCoding. El medio debe sustituirlo por su aviso legal revisado por un abogado.",
     ],
   },
   privacidad: {
@@ -19,7 +19,7 @@ const pages = {
     body: (org: string) => [
       `${org} solo guarda los datos que necesitas para usar tu cuenta: tu correo, tu nombre si lo das y los temas que sigues.`,
       "Puedes borrar tu cuenta y todos sus datos en cualquier momento desde tu perfil.",
-      "Este texto es una plantilla de NoticeCAT. El medio debe sustituirlo por su política real, con la lista de proveedores que procesan datos.",
+      "Este texto es una plantilla de CatCoding. El medio debe sustituirlo por su política real, con la lista de proveedores que procesan datos.",
     ],
   },
 } as const;

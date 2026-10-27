@@ -17,7 +17,7 @@ export default async function PlatformLayout({ children }: { children: React.Rea
           <div className="flex items-center justify-between md:block">
             <div className="flex items-center gap-2">
               <ShieldCheck className="size-4 text-accent" aria-hidden />
-              <span className="eyebrow text-on-inverse-muted">NoticeCAT · IT</span>
+              <span className="eyebrow text-on-inverse-muted">CatCoding · IT</span>
             </div>
             <p className="font-display text-title md:mt-2">Plataforma</p>
           </div>

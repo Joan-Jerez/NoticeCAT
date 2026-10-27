@@ -95,7 +95,7 @@ export async function SiteFooter({ org }: { org: Organization }) {
           <p className="flex gap-4">
             <Link href="/legal/aviso-legal" className={linkCls}>Aviso legal</Link>
             <Link href="/legal/privacidad" className={linkCls}>Privacidad</Link>
-            <span>Hecho con NoticeCAT</span>
+            <span>Hecho con CatCoding</span>
           </p>
         </div>
       </div>

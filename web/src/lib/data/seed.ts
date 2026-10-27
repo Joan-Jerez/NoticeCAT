@@ -54,7 +54,7 @@ export function buildSeed(now = new Date()): DB {
   // ------------------------------------------------------------ medio 1
   const gaceta: Organization = {
     id: "org-gaceta",
-    name: "La Gaceta del Valle",
+    name: "CatCoding",
     slug: "gaceta",
     tagline: "Noticias con calma, contadas con cuidado.",
     timezone: "America/Santo_Domingo",
@@ -545,7 +545,7 @@ El equipo viajará al campeonato del Caribe en marzo.`,
     ["El malecón estrena iluminación nueva", "costa-sec-local", 2, 17],
     ["Bandera verde en todas las playas este fin de semana", "costa-sec-playas", 5, 18],
   ] as const) {
-    const doc = textToDoc("Nota de prueba del segundo medio. No debe aparecer en La Gaceta del Valle.");
+    const doc = textToDoc("Nota de prueba del segundo medio. No debe aparecer en CatCoding.");
     db.articles.push({
       id: `costa-${slugify(title)}`,
       orgId: costa.id,

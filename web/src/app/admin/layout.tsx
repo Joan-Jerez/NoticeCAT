@@ -34,7 +34,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <div className="flex items-center justify-between md:block">
             <div className="flex items-center gap-2">
               <span className="size-2.5 rounded-full bg-accent" aria-hidden />
-              <span className="eyebrow text-on-inverse-muted">NoticeCAT</span>
+              <span className="eyebrow text-on-inverse-muted">CatCoding</span>
             </div>
             <p className="font-display text-title md:mt-2">{org.name}</p>
           </div>

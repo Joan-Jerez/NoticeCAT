@@ -44,7 +44,11 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         {/* colores, tipografías y esquinas del medio (valores validados en lib/theme.ts) */}
         <style id="tema-del-medio" dangerouslySetInnerHTML={{ __html: themeCss(org.theme) }} />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        {/* marca de agua de CatCoding: el gato en mosaico sobre toda la página */}
+        <div aria-hidden className="marca-de-agua" />
+      </body>
     </html>
   );
 }

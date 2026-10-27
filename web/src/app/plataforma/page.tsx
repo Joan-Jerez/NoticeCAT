@@ -33,7 +33,7 @@ export default async function PlatformHome({ searchParams }: { searchParams: Pro
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="font-display text-heading-lg font-semibold">Medios</h1>
-          <p className="mt-1 text-ui text-text-muted">Todo lo que corre en NoticeCAT. Solo tú ves esta página.</p>
+          <p className="mt-1 text-ui text-text-muted">Todo lo que corre en CatCoding. Solo tú ves esta página.</p>
         </div>
         <ButtonLink href="/plataforma/medios/nuevo">
           <Plus className="size-4" aria-hidden /> Nuevo medio

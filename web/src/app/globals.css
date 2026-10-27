@@ -268,3 +268,19 @@
     pointer-events: none;
   }
 }
+
+/* Marca de agua de CatCoding: el gato en mosaico escalonado, por encima de
+   todo pero sin recibir clics, tan tenue que no estorba la lectura. */
+.marca-de-agua {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("/brand/catcoding-marca.png");
+  background-size: 260px 260px;
+  background-repeat: repeat;
+}
+@media print {
+  .marca-de-agua { display: none; }
+}
