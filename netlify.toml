@@ -1,0 +1,8 @@
+# La app está en web/ (Next.js). Los .html de la raíz son los prototipos viejos.
+[build]
+  base = "web"
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
